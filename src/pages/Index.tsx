@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -361,6 +362,235 @@ const Index = () => {
           total: "₹14,159"
         }
       }
+    ],
+    officeTollFree: [
+      {
+        name: "Budding",
+        price: "₹1,199",
+        features: {
+          channels: "2",
+          users: "3",
+          proLicense: "1",
+          afterCallSMS: "✓",
+          departments: "3",
+          webhook: "✗",
+          outgoingV2: "✗",
+          fixDid: "1",
+          whatsappMarketing: "✗",
+          whatsappService: "✗",
+          whatsappUtility: "✗",
+          validity: "30 Days",
+          gst: "₹216",
+          total: "₹1,415"
+        }
+      },
+      {
+        name: "Basic",
+        price: "₹1,799",
+        features: {
+          channels: "3",
+          users: "7",
+          proLicense: "2",
+          afterCallSMS: "✓",
+          departments: "7",
+          webhook: "✓",
+          outgoingV2: "✗",
+          fixDid: "2",
+          whatsappMarketing: "✗",
+          whatsappService: "✓",
+          whatsappUtility: "✗",
+          validity: "30 Days",
+          gst: "₹324",
+          total: "₹2,123"
+        },
+        popular: true
+      },
+      {
+        name: "Growth",
+        price: "₹3,499",
+        features: {
+          channels: "7",
+          users: "15",
+          proLicense: "4",
+          afterCallSMS: "✓",
+          departments: "15",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "3",
+          whatsappMarketing: "✓",
+          whatsappService: "✓",
+          whatsappUtility: "✓",
+          validity: "30 Days",
+          gst: "₹630",
+          total: "₹4,129"
+        }
+      },
+      {
+        name: "Business",
+        price: "₹6,999",
+        features: {
+          channels: "15",
+          users: "30",
+          proLicense: "7",
+          afterCallSMS: "✓",
+          departments: "Unlimited",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "7",
+          whatsappMarketing: "✓",
+          whatsappService: "✓",
+          whatsappUtility: "✓",
+          validity: "30 Days",
+          gst: "₹1,260",
+          total: "₹8,259"
+        }
+      },
+      {
+        name: "Premium",
+        price: "₹13,999",
+        features: {
+          channels: "30",
+          users: "75",
+          proLicense: "15",
+          afterCallSMS: "✓",
+          departments: "Unlimited",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "15",
+          whatsappMarketing: "✓",
+          whatsappService: "✓",
+          whatsappUtility: "✓",
+          validity: "30 Days",
+          gst: "₹2,520",
+          total: "₹16,519"
+        }
+      }
+    ],
+    unlimited: [
+      {
+        name: "Unlimited Basic",
+        price: "₹2,999",
+        features: {
+          channels: "Unlimited",
+          users: "10",
+          proLicense: "5",
+          afterCallSMS: "✓",
+          departments: "Unlimited",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "3",
+          whatsappMarketing: "✓",
+          whatsappService: "✓",
+          whatsappUtility: "✓",
+          validity: "30 Days",
+          gst: "₹540",
+          total: "₹3,539"
+        },
+        popular: true
+      },
+      {
+        name: "Unlimited Growth",
+        price: "₹4,999",
+        features: {
+          channels: "Unlimited",
+          users: "25",
+          proLicense: "10",
+          afterCallSMS: "✓",
+          departments: "Unlimited",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "5",
+          whatsappMarketing: "✓",
+          whatsappService: "✓",
+          whatsappUtility: "✓",
+          validity: "30 Days",
+          gst: "₹900",
+          total: "₹5,899"
+        }
+      },
+      {
+        name: "Unlimited Pro",
+        price: "₹7,999",
+        features: {
+          channels: "Unlimited",
+          users: "50",
+          proLicense: "20",
+          afterCallSMS: "✓",
+          departments: "Unlimited",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "10",
+          whatsappMarketing: "✓",
+          whatsappService: "✓",
+          whatsappUtility: "✓",
+          validity: "30 Days",
+          gst: "₹1,440",
+          total: "₹9,439"
+        }
+      }
+    ],
+    dialer: [
+      {
+        name: "Dialer Basic",
+        price: "₹1,999",
+        features: {
+          channels: "5",
+          users: "10",
+          proLicense: "3",
+          afterCallSMS: "✓",
+          departments: "5",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "2",
+          whatsappMarketing: "✗",
+          whatsappService: "✓",
+          whatsappUtility: "✗",
+          validity: "30 Days",
+          gst: "₹360",
+          total: "₹2,359"
+        },
+        popular: true
+      },
+      {
+        name: "Dialer Growth",
+        price: "₹3,999",
+        features: {
+          channels: "10",
+          users: "25",
+          proLicense: "7",
+          afterCallSMS: "✓",
+          departments: "15",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "5",
+          whatsappMarketing: "✓",
+          whatsappService: "✓",
+          whatsappUtility: "✓",
+          validity: "30 Days",
+          gst: "₹720",
+          total: "₹4,719"
+        }
+      },
+      {
+        name: "Dialer Pro",
+        price: "₹6,999",
+        features: {
+          channels: "25",
+          users: "50",
+          proLicense: "15",
+          afterCallSMS: "✓",
+          departments: "Unlimited",
+          webhook: "✓",
+          outgoingV2: "✓",
+          fixDid: "10",
+          whatsappMarketing: "✓",
+          whatsappService: "✓",
+          whatsappUtility: "✓",
+          validity: "30 Days",
+          gst: "₹1,260",
+          total: "₹8,259"
+        }
+      }
     ]
   };
 
@@ -384,6 +614,10 @@ const Index = () => {
       rating: 5
     }
   ];
+
+  const handlePlanClick = () => {
+    window.open('tel:+911234567890', '_self');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -560,251 +794,85 @@ const Index = () => {
               <TabsTrigger value="dialer">Dialer</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="cloudIVR">
-              <div className="grid md:grid-cols-5 gap-6">
-                {pricingPlans.cloudIVR.map((plan, index) => (
-                  <Card key={index} className={`relative ${plan.popular ? 'border-2 border-blue-500 shadow-lg' : ''}`}>
-                    {plan.popular && (
-                      <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500">
-                        Most Popular
-                      </Badge>
-                    )}
-                    <CardHeader className="text-center">
-                      <CardTitle className="text-lg">{plan.name}</CardTitle>
-                      <div className="text-3xl font-bold text-blue-600">{plan.price}</div>
-                      <p className="text-sm text-gray-500">per month</p>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div className="text-sm space-y-1">
-                        <div className="flex justify-between">
-                          <span>Channels:</span>
-                          <span className="font-semibold">{plan.features.channels}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Users:</span>
-                          <span className="font-semibold">{plan.features.users}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Pro License:</span>
-                          <span className="font-semibold">{plan.features.proLicense}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>After Call SMS:</span>
-                          <span className={plan.features.afterCallSMS === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.afterCallSMS}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Departments:</span>
-                          <span className="font-semibold">{plan.features.departments}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Webhook:</span>
-                          <span className={plan.features.webhook === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.webhook}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>WhatsApp Service:</span>
-                          <span className={plan.features.whatsappService === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.whatsappService}
-                          </span>
-                        </div>
-                        <div className="border-t pt-2 mt-2">
-                          <div className="flex justify-between text-sm">
-                            <span>Base Price:</span>
-                            <span>{plan.price}</span>
+            {Object.entries(pricingPlans).map(([key, plans]) => (
+              <TabsContent key={key} value={key}>
+                <div className="grid md:grid-cols-5 gap-6">
+                  {plans.map((plan, index) => (
+                    <Card key={index} className={`relative ${plan.popular ? 'border-2 border-blue-500 shadow-lg' : ''}`}>
+                      {plan.popular && (
+                        <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500">
+                          Most Popular
+                        </Badge>
+                      )}
+                      <CardHeader className="text-center">
+                        <CardTitle className="text-lg">{plan.name}</CardTitle>
+                        <div className="text-3xl font-bold text-blue-600">{plan.price}</div>
+                        <p className="text-sm text-gray-500">per month</p>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        <div className="text-sm space-y-1">
+                          <div className="flex justify-between">
+                            <span>Channels:</span>
+                            <span className="font-semibold">{plan.features.channels}</span>
                           </div>
-                          <div className="flex justify-between text-sm">
-                            <span>GST (18%):</span>
-                            <span>{plan.features.gst}</span>
+                          <div className="flex justify-between">
+                            <span>Users:</span>
+                            <span className="font-semibold">{plan.features.users}</span>
                           </div>
-                          <div className="flex justify-between font-bold">
-                            <span>Total:</span>
-                            <span className="text-blue-600">{plan.features.total}</span>
+                          <div className="flex justify-between">
+                            <span>Pro License:</span>
+                            <span className="font-semibold">{plan.features.proLicense}</span>
                           </div>
-                        </div>
-                      </div>
-                      <Button className="w-full mt-4" variant={plan.popular ? "default" : "outline"}>
-                        Choose Plan
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="officeIVR">
-              <div className="grid md:grid-cols-5 gap-6">
-                {pricingPlans.officeIVR.map((plan, index) => (
-                  <Card key={index} className={`relative ${plan.popular ? 'border-2 border-blue-500 shadow-lg' : ''}`}>
-                    {plan.popular && (
-                      <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500">
-                        Most Popular
-                      </Badge>
-                    )}
-                    <CardHeader className="text-center">
-                      <CardTitle className="text-lg">{plan.name}</CardTitle>
-                      <div className="text-3xl font-bold text-blue-600">{plan.price}</div>
-                      <p className="text-sm text-gray-500">per month</p>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div className="text-sm space-y-1">
-                        <div className="flex justify-between">
-                          <span>Channels:</span>
-                          <span className="font-semibold">{plan.features.channels}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Users:</span>
-                          <span className="font-semibold">{plan.features.users}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Pro License:</span>
-                          <span className="font-semibold">{plan.features.proLicense}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>After Call SMS:</span>
-                          <span className={plan.features.afterCallSMS === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.afterCallSMS}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Departments:</span>
-                          <span className="font-semibold">{plan.features.departments}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Webhook:</span>
-                          <span className={plan.features.webhook === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.webhook}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>WhatsApp Service:</span>
-                          <span className={plan.features.whatsappService === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.whatsappService}
-                          </span>
-                        </div>
-                        <div className="border-t pt-2 mt-2">
-                          <div className="flex justify-between text-sm">
-                            <span>Base Price:</span>
-                            <span>{plan.price}</span>
+                          <div className="flex justify-between">
+                            <span>After Call SMS:</span>
+                            <span className={plan.features.afterCallSMS === '✓' ? 'text-green-600' : 'text-red-500'}>
+                              {plan.features.afterCallSMS}
+                            </span>
                           </div>
-                          <div className="flex justify-between text-sm">
-                            <span>GST (18%):</span>
-                            <span>{plan.features.gst}</span>
+                          <div className="flex justify-between">
+                            <span>Departments:</span>
+                            <span className="font-semibold">{plan.features.departments}</span>
                           </div>
-                          <div className="flex justify-between font-bold">
-                            <span>Total:</span>
-                            <span className="text-blue-600">{plan.features.total}</span>
+                          <div className="flex justify-between">
+                            <span>Webhook:</span>
+                            <span className={plan.features.webhook === '✓' ? 'text-green-600' : 'text-red-500'}>
+                              {plan.features.webhook}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>WhatsApp Service:</span>
+                            <span className={plan.features.whatsappService === '✓' ? 'text-green-600' : 'text-red-500'}>
+                              {plan.features.whatsappService}
+                            </span>
+                          </div>
+                          <div className="border-t pt-2 mt-2">
+                            <div className="flex justify-between text-sm">
+                              <span>Base Price:</span>
+                              <span>{plan.price}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span>GST (18%):</span>
+                              <span>{plan.features.gst}</span>
+                            </div>
+                            <div className="flex justify-between font-bold">
+                              <span>Total:</span>
+                              <span className="text-blue-600">{plan.features.total}</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <Button className="w-full mt-4" variant={plan.popular ? "default" : "outline"}>
-                        Choose Plan
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="cloudTollFree">
-              <div className="grid md:grid-cols-5 gap-6">
-                {pricingPlans.cloudTollFree.map((plan, index) => (
-                  <Card key={index} className={`relative ${plan.popular ? 'border-2 border-blue-500 shadow-lg' : ''}`}>
-                    {plan.popular && (
-                      <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500">
-                        Most Popular
-                      </Badge>
-                    )}
-                    <CardHeader className="text-center">
-                      <CardTitle className="text-lg">{plan.name}</CardTitle>
-                      <div className="text-3xl font-bold text-blue-600">{plan.price}</div>
-                      <p className="text-sm text-gray-500">per month</p>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div className="text-sm space-y-1">
-                        <div className="flex justify-between">
-                          <span>Channels:</span>
-                          <span className="font-semibold">{plan.features.channels}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Users:</span>
-                          <span className="font-semibold">{plan.features.users}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Pro License:</span>
-                          <span className="font-semibold">{plan.features.proLicense}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>After Call SMS:</span>
-                          <span className={plan.features.afterCallSMS === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.afterCallSMS}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Departments:</span>
-                          <span className="font-semibold">{plan.features.departments}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Webhook:</span>
-                          <span className={plan.features.webhook === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.webhook}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>WhatsApp Service:</span>
-                          <span className={plan.features.whatsappService === '✓' ? 'text-green-600' : 'text-red-500'}>
-                            {plan.features.whatsappService}
-                          </span>
-                        </div>
-                        <div className="border-t pt-2 mt-2">
-                          <div className="flex justify-between text-sm">
-                            <span>Base Price:</span>
-                            <span>{plan.price}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span>GST (18%):</span>
-                            <span>{plan.features.gst}</span>
-                          </div>
-                          <div className="flex justify-between font-bold">
-                            <span>Total:</span>
-                            <span className="text-blue-600">{plan.features.total}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <Button className="w-full mt-4" variant={plan.popular ? "default" : "outline"}>
-                        Choose Plan
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="officeTollFree">
-              <div className="text-center py-12">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Office Toll-Free Plans</h3>
-                <p className="text-gray-600 mb-8">Coming Soon! Similar pricing structure to Cloud Toll-Free with office-specific features.</p>
-                <Button>Contact for Custom Quote</Button>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="unlimited">
-              <div className="text-center py-12">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Unlimited Plans</h3>
-                <p className="text-gray-600 mb-8">Unlimited calling plans starting from ₹2,999/month. Perfect for high-volume businesses.</p>
-                <Button>Contact for Custom Quote</Button>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="dialer">
-              <div className="text-center py-12">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Dialer Plans</h3>
-                <p className="text-gray-600 mb-8">Advanced dialer solutions for sales teams and call centers. Starting from ₹1,999/month.</p>
-                <Button>Contact for Custom Quote</Button>
-              </div>
-            </TabsContent>
+                        <Button 
+                          className="w-full mt-4" 
+                          variant={plan.popular ? "default" : "outline"}
+                          onClick={handlePlanClick}
+                        >
+                          Call for Best Discount
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+            ))}
           </Tabs>
         </div>
       </section>
