@@ -1,22 +1,36 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Save, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Settings, Save, Eye, EyeOff, Plus, Trash2, Edit3 } from 'lucide-react';
 import { toast } from "sonner";
 
 const AdminPanel = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [editingPackage, setEditingPackage] = useState(null);
   
   const adminCredentials = {
     username: 'admin',
     password: 'leadify2024'
+  };
+
+  const defaultPackages = {
+    cloudIVR: [
+      { id: 1, name: 'Basic', price: '₹499', features: ['2 Extensions', '24x7 Support', 'Call Recording', 'Web Dashboard'] },
+      { id: 2, name: 'Standard', price: '₹999', features: ['5 Extensions', '24x7 Support', 'Call Recording', 'Web Dashboard', 'SMS Integration'] },
+      { id: 3, name: 'Premium', price: '₹1999', features: ['Unlimited Extensions', '24x7 Support', 'Call Recording', 'Web Dashboard', 'SMS Integration', 'CRM Integration'] }
+    ],
+    officeIVR: [
+      { id: 1, name: 'Basic', price: '₹799', features: ['Hardware Included', '3 Extensions', 'Local Support', 'Call Recording'] },
+      { id: 2, name: 'Standard', price: '₹1499', features: ['Hardware Included', '8 Extensions', 'Local Support', 'Call Recording', 'Queue Management'] },
+      { id: 3, name: 'Premium', price: '₹2999', features: ['Hardware Included', 'Unlimited Extensions', 'Local Support', 'Call Recording', 'Queue Management', 'Analytics'] }
+    ]
   };
 
   const [siteData, setSiteData] = useState({
@@ -28,6 +42,7 @@ const AdminPanel = () => {
     heroSubheadline: 'Affordable Pricing • Easy To Use • 24x7 Call Routing • Cloud Hosted • No Hardware Needed',
     logoUrl: '',
     leadWebhookUrl: '',
+    leadEmail: 'leads@leadify.com',
     seoTitle: 'Leadify - Best IVR & Toll-Free Number Services in India',
     seoDescription: 'Get professional IVR systems and toll-free numbers for your business. 24x7 support, easy setup, affordable pricing. Trusted by 5000+ businesses.',
     seoKeywords: 'IVR system, toll-free number, virtual number, cloud telephony, business phone system',
@@ -47,8 +62,17 @@ const AdminPanel = () => {
       { id: 'officeTollFree', name: 'Office Toll-Free', active: true },
       { id: 'unlimited', name: 'Unlimited', active: true },
       { id: 'dialer', name: 'Dialer', active: true }
-    ]
+    ],
+    packages: defaultPackages
   });
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('leadify_site_data');
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      setSiteData({ ...siteData, ...parsed, packages: parsed.packages || defaultPackages });
+    }
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,6 +153,103 @@ const AdminPanel = () => {
     });
   };
 
+  const addPackage = (tabId: string) => {
+    const newPackage = {
+      id: Date.now(),
+      name: 'New Package',
+      price: '₹999',
+      features: ['Feature 1', 'Feature 2']
+    };
+    setSiteData({
+      ...siteData,
+      packages: {
+        ...siteData.packages,
+        [tabId]: [...(siteData.packages[tabId] || []), newPackage]
+      }
+    });
+  };
+
+  const removePackage = (tabId: string, packageId: number) => {
+    setSiteData({
+      ...siteData,
+      packages: {
+        ...siteData.packages,
+        [tabId]: siteData.packages[tabId]?.filter(pkg => pkg.id !== packageId) || []
+      }
+    });
+  };
+
+  const updatePackage = (tabId: string, packageId: number, field: string, value: any) => {
+    setSiteData({
+      ...siteData,
+      packages: {
+        ...siteData.packages,
+        [tabId]: siteData.packages[tabId]?.map(pkg => 
+          pkg.id === packageId ? { ...pkg, [field]: value } : pkg
+        ) || []
+      }
+    });
+  };
+
+  const addFeature = (tabId: string, packageId: number) => {
+    const packages = siteData.packages[tabId] || [];
+    const packageIndex = packages.findIndex(pkg => pkg.id === packageId);
+    if (packageIndex !== -1) {
+      const updatedPackages = [...packages];
+      updatedPackages[packageIndex] = {
+        ...updatedPackages[packageIndex],
+        features: [...updatedPackages[packageIndex].features, 'New Feature']
+      };
+      setSiteData({
+        ...siteData,
+        packages: {
+          ...siteData.packages,
+          [tabId]: updatedPackages
+        }
+      });
+    }
+  };
+
+  const removeFeature = (tabId: string, packageId: number, featureIndex: number) => {
+    const packages = siteData.packages[tabId] || [];
+    const packageIndex = packages.findIndex(pkg => pkg.id === packageId);
+    if (packageIndex !== -1) {
+      const updatedPackages = [...packages];
+      updatedPackages[packageIndex] = {
+        ...updatedPackages[packageIndex],
+        features: updatedPackages[packageIndex].features.filter((_, index) => index !== featureIndex)
+      };
+      setSiteData({
+        ...siteData,
+        packages: {
+          ...siteData.packages,
+          [tabId]: updatedPackages
+        }
+      });
+    }
+  };
+
+  const updateFeature = (tabId: string, packageId: number, featureIndex: number, value: string) => {
+    const packages = siteData.packages[tabId] || [];
+    const packageIndex = packages.findIndex(pkg => pkg.id === packageId);
+    if (packageIndex !== -1) {
+      const updatedPackages = [...packages];
+      const updatedFeatures = [...updatedPackages[packageIndex].features];
+      updatedFeatures[featureIndex] = value;
+      updatedPackages[packageIndex] = {
+        ...updatedPackages[packageIndex],
+        features: updatedFeatures
+      };
+      setSiteData({
+        ...siteData,
+        packages: {
+          ...siteData.packages,
+          [tabId]: updatedPackages
+        }
+      });
+    }
+  };
+
   if (!isVisible) {
     return (
       <div className="fixed bottom-20 right-6 z-50">
@@ -144,7 +265,7 @@ const AdminPanel = () => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-6xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center space-x-2">
             <Settings className="h-6 w-6" />
@@ -191,14 +312,16 @@ const AdminPanel = () => {
                 <p><strong>Default Credentials:</strong></p>
                 <p>Username: admin</p>
                 <p>Password: leadify2024</p>
+                <p><strong>Admin URL:</strong> {window.location.origin}/admin</p>
               </div>
             </form>
           ) : (
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-6">
+              <TabsList className="grid w-full grid-cols-7">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="content">Content</TabsTrigger>
                 <TabsTrigger value="pricing">Pricing</TabsTrigger>
+                <TabsTrigger value="packages">Packages</TabsTrigger>
                 <TabsTrigger value="testimonials">Reviews</TabsTrigger>
                 <TabsTrigger value="seo">SEO</TabsTrigger>
                 <TabsTrigger value="leads">Leads</TabsTrigger>
@@ -312,6 +435,80 @@ const AdminPanel = () => {
                 </div>
               </TabsContent>
 
+              <TabsContent value="packages" className="space-y-6 mt-6">
+                <h3 className="text-lg font-semibold">Package Management</h3>
+                {siteData.pricingTabs.filter(tab => tab.active).map((tab) => (
+                  <Card key={tab.id} className="p-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="text-md font-medium">{tab.name} Packages</h4>
+                      <Button onClick={() => addPackage(tab.id)} size="sm">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Package
+                      </Button>
+                    </div>
+                    <div className="space-y-4">
+                      {(siteData.packages[tab.id] || []).map((pkg) => (
+                        <Card key={pkg.id} className="p-4 bg-gray-50">
+                          <div className="flex justify-between items-start mb-4">
+                            <div className="flex-1 grid grid-cols-2 gap-4">
+                              <div>
+                                <Label>Package Name</Label>
+                                <Input
+                                  value={pkg.name}
+                                  onChange={(e) => updatePackage(tab.id, pkg.id, 'name', e.target.value)}
+                                />
+                              </div>
+                              <div>
+                                <Label>Price</Label>
+                                <Input
+                                  value={pkg.price}
+                                  onChange={(e) => updatePackage(tab.id, pkg.id, 'price', e.target.value)}
+                                />
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => removePackage(tab.id, pkg.id)}
+                              variant="destructive"
+                              size="sm"
+                              className="ml-4"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <Label>Features</Label>
+                              <Button onClick={() => addFeature(tab.id, pkg.id)} size="sm" variant="outline">
+                                <Plus className="h-4 w-4 mr-1" />
+                                Add Feature
+                              </Button>
+                            </div>
+                            <div className="space-y-2">
+                              {pkg.features.map((feature, index) => (
+                                <div key={index} className="flex gap-2">
+                                  <Input
+                                    value={feature}
+                                    onChange={(e) => updateFeature(tab.id, pkg.id, index, e.target.value)}
+                                    className="flex-1"
+                                  />
+                                  <Button
+                                    onClick={() => removeFeature(tab.id, pkg.id, index)}
+                                    variant="outline"
+                                    size="sm"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </Card>
+                ))}
+              </TabsContent>
+
               <TabsContent value="testimonials" className="space-y-4 mt-6">
                 <div className="flex justify-between items-center">
                   <Label>Customer Testimonials</Label>
@@ -409,6 +606,19 @@ const AdminPanel = () => {
                   />
                   <p className="text-sm text-gray-600 mt-2">
                     When someone submits the lead form, data will be sent to this URL as a POST request.
+                  </p>
+                </div>
+                <div>
+                  <Label htmlFor="leadEmail">Lead Email Address</Label>
+                  <Input
+                    id="leadEmail"
+                    type="email"
+                    value={siteData.leadEmail}
+                    onChange={(e) => setSiteData({...siteData, leadEmail: e.target.value})}
+                    placeholder="leads@yourcompany.com"
+                  />
+                  <p className="text-sm text-gray-600 mt-2">
+                    Leads will also be sent to this email address.
                   </p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded">
