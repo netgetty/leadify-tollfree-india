@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Save, Eye, EyeOff } from 'lucide-react';
+import { Settings, Save, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import { toast } from "sonner";
 
 const AdminPanel = () => {
@@ -14,7 +14,6 @@ const AdminPanel = () => {
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
-  // Default admin credentials (you can change these)
   const adminCredentials = {
     username: 'admin',
     password: 'leadify2024'
@@ -28,13 +27,26 @@ const AdminPanel = () => {
     heroHeadline: 'Boost Your Business with Smart IVR & Toll-Free Numbers',
     heroSubheadline: 'Affordable Pricing • Easy To Use • 24x7 Call Routing • Cloud Hosted • No Hardware Needed',
     logoUrl: '',
+    leadWebhookUrl: '',
+    seoTitle: 'Leadify - Best IVR & Toll-Free Number Services in India',
+    seoDescription: 'Get professional IVR systems and toll-free numbers for your business. 24x7 support, easy setup, affordable pricing. Trusted by 5000+ businesses.',
+    seoKeywords: 'IVR system, toll-free number, virtual number, cloud telephony, business phone system',
     testimonials: [
       {
+        id: 1,
         name: 'Rajesh Kumar',
         company: 'TechSolutions Pvt Ltd',
         text: 'Leadify\'s IVR system increased our customer satisfaction by 40%. Professional service and great support!',
         rating: 5
       }
+    ],
+    pricingTabs: [
+      { id: 'cloudIVR', name: 'Cloud IVR', active: true },
+      { id: 'officeIVR', name: 'Office IVR', active: true },
+      { id: 'cloudTollFree', name: 'Cloud Toll-Free', active: true },
+      { id: 'officeTollFree', name: 'Office Toll-Free', active: true },
+      { id: 'unlimited', name: 'Unlimited', active: true },
+      { id: 'dialer', name: 'Dialer', active: true }
     ]
   });
 
@@ -49,7 +61,6 @@ const AdminPanel = () => {
   };
 
   const handleSave = () => {
-    // Save to localStorage for persistence
     localStorage.setItem('leadify_site_data', JSON.stringify(siteData));
     toast.success('Changes saved successfully!');
   };
@@ -58,6 +69,64 @@ const AdminPanel = () => {
     setIsLoggedIn(false);
     setLoginData({ username: '', password: '' });
     toast.success('Logged out successfully!');
+  };
+
+  const addTestimonial = () => {
+    const newTestimonial = {
+      id: Date.now(),
+      name: '',
+      company: '',
+      text: '',
+      rating: 5
+    };
+    setSiteData({
+      ...siteData,
+      testimonials: [...siteData.testimonials, newTestimonial]
+    });
+  };
+
+  const removeTestimonial = (id: number) => {
+    setSiteData({
+      ...siteData,
+      testimonials: siteData.testimonials.filter(t => t.id !== id)
+    });
+  };
+
+  const updateTestimonial = (id: number, field: string, value: string | number) => {
+    setSiteData({
+      ...siteData,
+      testimonials: siteData.testimonials.map(t => 
+        t.id === id ? { ...t, [field]: value } : t
+      )
+    });
+  };
+
+  const addPricingTab = () => {
+    const newTab = {
+      id: `tab_${Date.now()}`,
+      name: 'New Tab',
+      active: true
+    };
+    setSiteData({
+      ...siteData,
+      pricingTabs: [...siteData.pricingTabs, newTab]
+    });
+  };
+
+  const removePricingTab = (id: string) => {
+    setSiteData({
+      ...siteData,
+      pricingTabs: siteData.pricingTabs.filter(tab => tab.id !== id)
+    });
+  };
+
+  const updatePricingTab = (id: string, field: string, value: string | boolean) => {
+    setSiteData({
+      ...siteData,
+      pricingTabs: siteData.pricingTabs.map(tab => 
+        tab.id === id ? { ...tab, [field]: value } : tab
+      )
+    });
   };
 
   if (!isVisible) {
@@ -126,11 +195,13 @@ const AdminPanel = () => {
             </form>
           ) : (
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="content">Content</TabsTrigger>
                 <TabsTrigger value="pricing">Pricing</TabsTrigger>
-                <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+                <TabsTrigger value="testimonials">Reviews</TabsTrigger>
+                <TabsTrigger value="seo">SEO</TabsTrigger>
+                <TabsTrigger value="leads">Leads</TabsTrigger>
               </TabsList>
 
               <TabsContent value="basic" className="space-y-4 mt-6">
@@ -160,11 +231,12 @@ const AdminPanel = () => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="whatsapp">WhatsApp Number</Label>
+                    <Label htmlFor="whatsapp">WhatsApp Number (without +)</Label>
                     <Input
                       id="whatsapp"
                       value={siteData.whatsapp}
                       onChange={(e) => setSiteData({...siteData, whatsapp: e.target.value})}
+                      placeholder="911234567890"
                     />
                   </div>
                 </div>
@@ -200,58 +272,156 @@ const AdminPanel = () => {
               </TabsContent>
 
               <TabsContent value="pricing" className="space-y-4 mt-6">
-                <div className="text-center p-8">
-                  <h3 className="text-xl font-bold mb-4">Pricing Management</h3>
-                  <p className="text-gray-600 mb-4">
-                    Pricing tables are dynamically generated from the component code.
-                    To update pricing, you'll need to modify the pricing data in the component.
-                  </p>
-                  <Button variant="outline">
-                    Contact Developer for Pricing Updates
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Pricing Tabs Management</h3>
+                  <Button onClick={addPricingTab} size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Tab
                   </Button>
+                </div>
+                <div className="space-y-4">
+                  {siteData.pricingTabs.map((tab) => (
+                    <Card key={tab.id} className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 grid grid-cols-2 gap-4">
+                          <Input
+                            placeholder="Tab Name"
+                            value={tab.name}
+                            onChange={(e) => updatePricingTab(tab.id, 'name', e.target.value)}
+                          />
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              checked={tab.active}
+                              onChange={(e) => updatePricingTab(tab.id, 'active', e.target.checked)}
+                            />
+                            <span className="text-sm">Active</span>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => removePricingTab(tab.id)}
+                          variant="destructive"
+                          size="sm"
+                          className="ml-4"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
               </TabsContent>
 
               <TabsContent value="testimonials" className="space-y-4 mt-6">
-                <div>
+                <div className="flex justify-between items-center">
                   <Label>Customer Testimonials</Label>
-                  <div className="space-y-4 mt-2">
-                    {siteData.testimonials.map((testimonial, index) => (
-                      <Card key={index} className="p-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <Input
-                            placeholder="Customer Name"
-                            value={testimonial.name}
-                            onChange={(e) => {
-                              const updatedTestimonials = [...siteData.testimonials];
-                              updatedTestimonials[index].name = e.target.value;
-                              setSiteData({...siteData, testimonials: updatedTestimonials});
-                            }}
-                          />
-                          <Input
-                            placeholder="Company Name"
-                            value={testimonial.company}
-                            onChange={(e) => {
-                              const updatedTestimonials = [...siteData.testimonials];
-                              updatedTestimonials[index].company = e.target.value;
-                              setSiteData({...siteData, testimonials: updatedTestimonials});
-                            }}
-                          />
-                        </div>
-                        <Textarea
-                          placeholder="Testimonial text"
-                          value={testimonial.text}
-                          onChange={(e) => {
-                            const updatedTestimonials = [...siteData.testimonials];
-                            updatedTestimonials[index].text = e.target.value;
-                            setSiteData({...siteData, testimonials: updatedTestimonials});
-                          }}
-                          className="mt-2"
-                          rows={2}
+                  <Button onClick={addTestimonial} size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Testimonial
+                  </Button>
+                </div>
+                <div className="space-y-4 mt-2">
+                  {siteData.testimonials.map((testimonial) => (
+                    <Card key={testimonial.id} className="p-4">
+                      <div className="flex justify-between items-start mb-4">
+                        <h4 className="font-medium">Testimonial #{testimonial.id}</h4>
+                        <Button
+                          onClick={() => removeTestimonial(testimonial.id)}
+                          variant="destructive"
+                          size="sm"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <Input
+                          placeholder="Customer Name"
+                          value={testimonial.name}
+                          onChange={(e) => updateTestimonial(testimonial.id, 'name', e.target.value)}
                         />
-                      </Card>
-                    ))}
-                  </div>
+                        <Input
+                          placeholder="Company Name"
+                          value={testimonial.company}
+                          onChange={(e) => updateTestimonial(testimonial.id, 'company', e.target.value)}
+                        />
+                      </div>
+                      <Textarea
+                        placeholder="Testimonial text"
+                        value={testimonial.text}
+                        onChange={(e) => updateTestimonial(testimonial.id, 'text', e.target.value)}
+                        className="mb-4"
+                        rows={2}
+                      />
+                      <div>
+                        <Label>Rating</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          max="5"
+                          value={testimonial.rating}
+                          onChange={(e) => updateTestimonial(testimonial.id, 'rating', parseInt(e.target.value))}
+                        />
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="seo" className="space-y-4 mt-6">
+                <div>
+                  <Label htmlFor="seoTitle">SEO Title</Label>
+                  <Input
+                    id="seoTitle"
+                    value={siteData.seoTitle}
+                    onChange={(e) => setSiteData({...siteData, seoTitle: e.target.value})}
+                    placeholder="Page title for search engines"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="seoDescription">SEO Description</Label>
+                  <Textarea
+                    id="seoDescription"
+                    value={siteData.seoDescription}
+                    onChange={(e) => setSiteData({...siteData, seoDescription: e.target.value})}
+                    placeholder="Meta description for search engines"
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="seoKeywords">SEO Keywords</Label>
+                  <Input
+                    id="seoKeywords"
+                    value={siteData.seoKeywords}
+                    onChange={(e) => setSiteData({...siteData, seoKeywords: e.target.value})}
+                    placeholder="keyword1, keyword2, keyword3"
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="leads" className="space-y-4 mt-6">
+                <div>
+                  <Label htmlFor="leadWebhookUrl">Lead Webhook URL</Label>
+                  <Input
+                    id="leadWebhookUrl"
+                    value={siteData.leadWebhookUrl}
+                    onChange={(e) => setSiteData({...siteData, leadWebhookUrl: e.target.value})}
+                    placeholder="https://your-webhook-url.com/leads"
+                  />
+                  <p className="text-sm text-gray-600 mt-2">
+                    When someone submits the lead form, data will be sent to this URL as a POST request.
+                  </p>
+                </div>
+                <div className="p-4 bg-gray-50 rounded">
+                  <h4 className="font-medium mb-2">Webhook Payload Format:</h4>
+                  <pre className="text-xs text-gray-700">
+{`{
+  "name": "Customer Name",
+  "phone": "+91 9876543210", 
+  "email": "customer@email.com",
+  "service": "ivr|tollfree|both",
+  "timestamp": "2024-01-01T00:00:00Z"
+}`}
+                  </pre>
                 </div>
               </TabsContent>
 

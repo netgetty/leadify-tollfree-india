@@ -6,9 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Phone, MessageCircle, CheckCircle, Star, Users, Shield, Clock, Zap, PhoneCall, MessageSquare, Globe, Award, TrendingUp, HeadphonesIcon } from 'lucide-react';
+import { Phone, MessageCircle, CheckCircle, Star, Users, Shield, Clock, Zap, PhoneCall, Globe, Award, TrendingUp, HeadphonesIcon } from 'lucide-react';
 import { toast } from "sonner";
-import AdminPanel from '@/components/AdminPanel';
 
 const Index = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +17,67 @@ const Index = () => {
     service: ''
   });
   const [dynamicHeadline, setDynamicHeadline] = useState("Boost Your Business with Smart IVR & Toll-Free Numbers");
+  const [siteData, setSiteData] = useState({
+    companyName: 'Leadify',
+    phone: '+91 123-456-7890',
+    email: 'support@leadify.com',
+    whatsapp: '911234567890',
+    heroHeadline: 'Boost Your Business with Smart IVR & Toll-Free Numbers',
+    heroSubheadline: 'Affordable Pricing • Easy To Use • 24x7 Call Routing • Cloud Hosted • No Hardware Needed',
+    logoUrl: '',
+    leadWebhookUrl: '',
+    seoTitle: 'Leadify - Best IVR & Toll-Free Number Services in India',
+    seoDescription: 'Get professional IVR systems and toll-free numbers for your business. 24x7 support, easy setup, affordable pricing. Trusted by 5000+ businesses.',
+    seoKeywords: 'IVR system, toll-free number, virtual number, cloud telephony, business phone system',
+    testimonials: [
+      {
+        id: 1,
+        name: 'Rajesh Kumar',
+        company: 'TechSolutions Pvt Ltd',
+        text: 'Leadify\'s IVR system increased our customer satisfaction by 40%. Professional service and great support!',
+        rating: 5
+      }
+    ],
+    pricingTabs: [
+      { id: 'cloudIVR', name: 'Cloud IVR', active: true },
+      { id: 'officeIVR', name: 'Office IVR', active: true },
+      { id: 'cloudTollFree', name: 'Cloud Toll-Free', active: true },
+      { id: 'officeTollFree', name: 'Office Toll-Free', active: true },
+      { id: 'unlimited', name: 'Unlimited', active: true },
+      { id: 'dialer', name: 'Dialer', active: true }
+    ]
+  });
+
+  // Load admin data from localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem('leadify_site_data');
+    if (savedData) {
+      setSiteData(JSON.parse(savedData));
+    }
+  }, []);
+
+  // Update document title and meta tags
+  useEffect(() => {
+    document.title = siteData.seoTitle;
+    
+    // Update meta description
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute('content', siteData.seoDescription);
+
+    // Update meta keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.setAttribute('name', 'keywords');
+      document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.setAttribute('content', siteData.seoKeywords);
+  }, [siteData.seoTitle, siteData.seoDescription, siteData.seoKeywords]);
 
   // Dynamic headline based on UTM parameters
   useEffect(() => {
@@ -31,10 +91,12 @@ const Index = () => {
       setDynamicHeadline("Boost Customer Trust with Toll-Free Numbers");
     } else if (utmSource === 'google') {
       setDynamicHeadline("India's #1 Cloud-Based Phone Solutions");
+    } else {
+      setDynamicHeadline(siteData.heroHeadline);
     }
-  }, []);
+  }, [siteData.heroHeadline]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Google Ads conversion tracking with proper type checking
@@ -44,8 +106,29 @@ const Index = () => {
       });
     }
     
+    // Prepare lead data
+    const leadData = {
+      ...formData,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Send to webhook if configured
+    if (siteData.leadWebhookUrl) {
+      try {
+        await fetch(siteData.leadWebhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(leadData),
+        });
+      } catch (error) {
+        console.error('Failed to send lead to webhook:', error);
+      }
+    }
+    
     // Form submission logic
-    console.log('Lead form submitted:', formData);
+    console.log('Lead form submitted:', leadData);
     toast.success("Thank you! We'll contact you within 2 hours.");
     
     // Reset form
@@ -593,29 +676,8 @@ const Index = () => {
     ]
   };
 
-  const testimonials = [
-    {
-      name: "Rajesh Kumar",
-      company: "TechSolutions Pvt Ltd",
-      text: "Leadify's IVR system increased our customer satisfaction by 40%. Professional service and great support!",
-      rating: 5
-    },
-    {
-      name: "Priya Sharma", 
-      company: "E-commerce Store",
-      text: "The toll-free number gave our business instant credibility. Sales increased by 60% in just 2 months!",
-      rating: 5
-    },
-    {
-      name: "Amit Patel",
-      company: "Healthcare Clinic",
-      text: "24x7 call routing ensures we never miss a patient call. Best investment for our practice!",
-      rating: 5
-    }
-  ];
-
   const handlePlanClick = () => {
-    window.open('tel:+911234567890', '_self');
+    window.open(`tel:${siteData.phone}`, '_self');
   };
 
   return (
@@ -624,13 +686,17 @@ const Index = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <Phone className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-800">Leadify</span>
+            {siteData.logoUrl ? (
+              <img src={siteData.logoUrl} alt={siteData.companyName} className="h-8 w-8" />
+            ) : (
+              <Phone className="h-8 w-8 text-blue-600" />
+            )}
+            <span className="text-2xl font-bold text-gray-800">{siteData.companyName}</span>
           </div>
           <div className="flex items-center space-x-4">
-            <a href="tel:+911234567890" className="flex items-center space-x-2 text-blue-600 hover:text-blue-800">
+            <a href={`tel:${siteData.phone}`} className="flex items-center space-x-2 text-blue-600 hover:text-blue-800">
               <PhoneCall className="h-5 w-5" />
-              <span className="font-semibold hidden sm:inline">+91 123-456-7890</span>
+              <span className="font-semibold hidden sm:inline">{siteData.phone}</span>
               <span className="font-semibold sm:hidden">Call</span>
             </a>
           </div>
@@ -646,7 +712,7 @@ const Index = () => {
                 {dynamicHeadline}
               </h1>
               <p className="text-lg md:text-xl mb-6 md:mb-8 text-blue-100">
-                Affordable Pricing • Easy To Use • 24x7 Call Routing • Cloud Hosted • No Hardware Needed
+                {siteData.heroSubheadline}
               </p>
               <div className="flex flex-wrap gap-4 mb-6 md:mb-8">
                 <div className="flex items-center space-x-2">
@@ -787,12 +853,9 @@ const Index = () => {
           <Tabs defaultValue="cloudIVR" className="w-full">
             <div className="overflow-x-auto">
               <TabsList className="w-full min-w-max mb-8">
-                <TabsTrigger value="cloudIVR">Cloud IVR</TabsTrigger>
-                <TabsTrigger value="officeIVR">Office IVR</TabsTrigger>
-                <TabsTrigger value="cloudTollFree">Cloud Toll-Free</TabsTrigger>
-                <TabsTrigger value="officeTollFree">Office Toll-Free</TabsTrigger>
-                <TabsTrigger value="unlimited">Unlimited</TabsTrigger>
-                <TabsTrigger value="dialer">Dialer</TabsTrigger>
+                {siteData.pricingTabs.filter(tab => tab.active).map((tab) => (
+                  <TabsTrigger key={tab.id} value={tab.id}>{tab.name}</TabsTrigger>
+                ))}
               </TabsList>
             </div>
 
@@ -892,8 +955,8 @@ const Index = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="p-4 md:p-6">
+            {siteData.testimonials.map((testimonial) => (
+              <Card key={testimonial.id} className="p-4 md:p-6">
                 <CardContent>
                   <div className="flex mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
@@ -965,8 +1028,12 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Phone className="h-8 w-8 text-blue-400" />
-                <span className="text-2xl font-bold">Leadify</span>
+                {siteData.logoUrl ? (
+                  <img src={siteData.logoUrl} alt={siteData.companyName} className="h-8 w-8" />
+                ) : (
+                  <Phone className="h-8 w-8 text-blue-400" />
+                )}
+                <span className="text-2xl font-bold">{siteData.companyName}</span>
               </div>
               <p className="text-gray-300 mb-4">
                 India's leading cloud-based IVR and toll-free number service provider.
@@ -993,14 +1060,14 @@ const Index = () => {
             <div>
               <h4 className="text-lg font-semibold mb-4">Contact</h4>
               <div className="space-y-2 text-gray-300">
-                <p>📞 +91 123-456-7890</p>
-                <p>📧 support@leadify.com</p>
+                <p>📞 {siteData.phone}</p>
+                <p>📧 {siteData.email}</p>
                 <p>📍 Mumbai, Delhi, Bangalore</p>
               </div>
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-            <p>&copy; 2024 Leadify Toll-Free India. All rights reserved.</p>
+            <p>&copy; 2024 {siteData.companyName} Toll-Free India. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -1008,7 +1075,7 @@ const Index = () => {
       {/* WhatsApp Chat Button */}
       <div className="fixed bottom-6 right-6 z-50">
         <a 
-          href="https://wa.me/911234567890?text=Hi, I'm interested in your IVR and toll-free services"
+          href={`https://wa.me/${siteData.whatsapp}?text=Hi, I'm interested in your IVR and toll-free services`}
           target="_blank"
           rel="noopener noreferrer"
           className="bg-green-500 hover:bg-green-600 text-white p-3 md:p-4 rounded-full shadow-lg transition-colors"
@@ -1020,15 +1087,12 @@ const Index = () => {
       {/* Click to Call Button */}
       <div className="fixed bottom-6 left-6 z-50">
         <a 
-          href="tel:+911234567890"
+          href={`tel:${siteData.phone}`}
           className="bg-blue-500 hover:bg-blue-600 text-white p-3 md:p-4 rounded-full shadow-lg transition-colors"
         >
           <Phone className="h-5 w-5 md:h-6 md:w-6" />
         </a>
       </div>
-
-      {/* Admin Panel */}
-      <AdminPanel />
     </div>
   );
 };
