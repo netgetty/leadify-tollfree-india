@@ -37,9 +37,9 @@ const Index = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Google Ads conversion tracking
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'conversion', {
+    // Google Ads conversion tracking with proper type checking
+    if (typeof window !== 'undefined' && 'gtag' in window) {
+      (window as any).gtag('event', 'conversion', {
         'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL'
       });
     }
