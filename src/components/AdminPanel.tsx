@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,71 +9,35 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Settings, Save, Eye, EyeOff, Plus, Trash2, Edit3 } from 'lucide-react';
 import { toast } from "sonner";
+import { useSupabaseData } from '@/hooks/useSupabaseData';
 
 const AdminPanel = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [editingPackage, setEditingPackage] = useState(null);
   
+  const {
+    websiteConfig,
+    testimonials,
+    pricingTabs,
+    packages,
+    loading,
+    saveWebsiteConfig,
+    addTestimonial,
+    updateTestimonial,
+    deleteTestimonial,
+    addPricingTab,
+    updatePricingTab,
+    deletePricingTab,
+    addPackage,
+    updatePackage,
+    deletePackage
+  } = useSupabaseData();
+
   const adminCredentials = {
     username: 'admin',
     password: 'leadify2024'
   };
-
-  const defaultPackages = {
-    cloudIVR: [
-      { id: 1, name: 'Basic', price: '₹499', features: ['2 Extensions', '24x7 Support', 'Call Recording', 'Web Dashboard'] },
-      { id: 2, name: 'Standard', price: '₹999', features: ['5 Extensions', '24x7 Support', 'Call Recording', 'Web Dashboard', 'SMS Integration'] },
-      { id: 3, name: 'Premium', price: '₹1999', features: ['Unlimited Extensions', '24x7 Support', 'Call Recording', 'Web Dashboard', 'SMS Integration', 'CRM Integration'] }
-    ],
-    officeIVR: [
-      { id: 1, name: 'Basic', price: '₹799', features: ['Hardware Included', '3 Extensions', 'Local Support', 'Call Recording'] },
-      { id: 2, name: 'Standard', price: '₹1499', features: ['Hardware Included', '8 Extensions', 'Local Support', 'Call Recording', 'Queue Management'] },
-      { id: 3, name: 'Premium', price: '₹2999', features: ['Hardware Included', 'Unlimited Extensions', 'Local Support', 'Call Recording', 'Queue Management', 'Analytics'] }
-    ]
-  };
-
-  const [siteData, setSiteData] = useState({
-    companyName: 'Leadify',
-    phone: '+91 123-456-7890',
-    email: 'support@leadify.com',
-    whatsapp: '911234567890',
-    heroHeadline: 'Boost Your Business with Smart IVR & Toll-Free Numbers',
-    heroSubheadline: 'Affordable Pricing • Easy To Use • 24x7 Call Routing • Cloud Hosted • No Hardware Needed',
-    logoUrl: '',
-    leadWebhookUrl: '',
-    leadEmail: 'leads@leadify.com',
-    seoTitle: 'Leadify - Best IVR & Toll-Free Number Services in India',
-    seoDescription: 'Get professional IVR systems and toll-free numbers for your business. 24x7 support, easy setup, affordable pricing. Trusted by 5000+ businesses.',
-    seoKeywords: 'IVR system, toll-free number, virtual number, cloud telephony, business phone system',
-    testimonials: [
-      {
-        id: 1,
-        name: 'Rajesh Kumar',
-        company: 'TechSolutions Pvt Ltd',
-        text: 'Leadify\'s IVR system increased our customer satisfaction by 40%. Professional service and great support!',
-        rating: 5
-      }
-    ],
-    pricingTabs: [
-      { id: 'cloudIVR', name: 'Cloud IVR', active: true },
-      { id: 'officeIVR', name: 'Office IVR', active: true },
-      { id: 'cloudTollFree', name: 'Cloud Toll-Free', active: true },
-      { id: 'officeTollFree', name: 'Office Toll-Free', active: true },
-      { id: 'unlimited', name: 'Unlimited', active: true },
-      { id: 'dialer', name: 'Dialer', active: true }
-    ],
-    packages: defaultPackages
-  });
-
-  useEffect(() => {
-    const savedData = localStorage.getItem('leadify_site_data');
-    if (savedData) {
-      const parsed = JSON.parse(savedData);
-      setSiteData({ ...siteData, ...parsed, packages: parsed.packages || defaultPackages });
-    }
-  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,170 +49,47 @@ const AdminPanel = () => {
     }
   };
 
-  const handleSave = () => {
-    localStorage.setItem('leadify_site_data', JSON.stringify(siteData));
-    toast.success('Changes saved successfully!');
-  };
-
   const handleLogout = () => {
     setIsLoggedIn(false);
     setLoginData({ username: '', password: '' });
     toast.success('Logged out successfully!');
   };
 
-  const addTestimonial = () => {
+  const handleSaveWebsiteConfig = () => {
+    if (websiteConfig) {
+      saveWebsiteConfig(websiteConfig);
+    }
+  };
+
+  const handleAddTestimonial = () => {
     const newTestimonial = {
-      id: Date.now(),
       name: '',
       company: '',
       text: '',
       rating: 5
     };
-    setSiteData({
-      ...siteData,
-      testimonials: [...siteData.testimonials, newTestimonial]
-    });
+    addTestimonial(newTestimonial);
   };
 
-  const removeTestimonial = (id: number) => {
-    setSiteData({
-      ...siteData,
-      testimonials: siteData.testimonials.filter(t => t.id !== id)
-    });
-  };
-
-  const updateTestimonial = (id: number, field: string, value: string | number) => {
-    setSiteData({
-      ...siteData,
-      testimonials: siteData.testimonials.map(t => 
-        t.id === id ? { ...t, [field]: value } : t
-      )
-    });
-  };
-
-  const addPricingTab = () => {
+  const handleAddPricingTab = () => {
     const newTab = {
-      id: `tab_${Date.now()}`,
+      tab_id: `tab_${Date.now()}`,
       name: 'New Tab',
-      active: true
+      active: true,
+      sort_order: pricingTabs.length + 1
     };
-    setSiteData({
-      ...siteData,
-      pricingTabs: [...siteData.pricingTabs, newTab]
-    });
+    addPricingTab(newTab);
   };
 
-  const removePricingTab = (id: string) => {
-    setSiteData({
-      ...siteData,
-      pricingTabs: siteData.pricingTabs.filter(tab => tab.id !== id)
-    });
-  };
-
-  const updatePricingTab = (id: string, field: string, value: string | boolean) => {
-    setSiteData({
-      ...siteData,
-      pricingTabs: siteData.pricingTabs.map(tab => 
-        tab.id === id ? { ...tab, [field]: value } : tab
-      )
-    });
-  };
-
-  const addPackage = (tabId: string) => {
+  const handleAddPackage = (tabId: string) => {
     const newPackage = {
-      id: Date.now(),
+      tab_id: tabId,
       name: 'New Package',
       price: '₹999',
-      features: ['Feature 1', 'Feature 2']
+      features: ['Feature 1', 'Feature 2'],
+      sort_order: (packages[tabId]?.length || 0) + 1
     };
-    setSiteData({
-      ...siteData,
-      packages: {
-        ...siteData.packages,
-        [tabId]: [...(siteData.packages[tabId] || []), newPackage]
-      }
-    });
-  };
-
-  const removePackage = (tabId: string, packageId: number) => {
-    setSiteData({
-      ...siteData,
-      packages: {
-        ...siteData.packages,
-        [tabId]: siteData.packages[tabId]?.filter(pkg => pkg.id !== packageId) || []
-      }
-    });
-  };
-
-  const updatePackage = (tabId: string, packageId: number, field: string, value: any) => {
-    setSiteData({
-      ...siteData,
-      packages: {
-        ...siteData.packages,
-        [tabId]: siteData.packages[tabId]?.map(pkg => 
-          pkg.id === packageId ? { ...pkg, [field]: value } : pkg
-        ) || []
-      }
-    });
-  };
-
-  const addFeature = (tabId: string, packageId: number) => {
-    const packages = siteData.packages[tabId] || [];
-    const packageIndex = packages.findIndex(pkg => pkg.id === packageId);
-    if (packageIndex !== -1) {
-      const updatedPackages = [...packages];
-      updatedPackages[packageIndex] = {
-        ...updatedPackages[packageIndex],
-        features: [...updatedPackages[packageIndex].features, 'New Feature']
-      };
-      setSiteData({
-        ...siteData,
-        packages: {
-          ...siteData.packages,
-          [tabId]: updatedPackages
-        }
-      });
-    }
-  };
-
-  const removeFeature = (tabId: string, packageId: number, featureIndex: number) => {
-    const packages = siteData.packages[tabId] || [];
-    const packageIndex = packages.findIndex(pkg => pkg.id === packageId);
-    if (packageIndex !== -1) {
-      const updatedPackages = [...packages];
-      updatedPackages[packageIndex] = {
-        ...updatedPackages[packageIndex],
-        features: updatedPackages[packageIndex].features.filter((_, index) => index !== featureIndex)
-      };
-      setSiteData({
-        ...siteData,
-        packages: {
-          ...siteData.packages,
-          [tabId]: updatedPackages
-        }
-      });
-    }
-  };
-
-  const updateFeature = (tabId: string, packageId: number, featureIndex: number, value: string) => {
-    const packages = siteData.packages[tabId] || [];
-    const packageIndex = packages.findIndex(pkg => pkg.id === packageId);
-    if (packageIndex !== -1) {
-      const updatedPackages = [...packages];
-      const updatedFeatures = [...updatedPackages[packageIndex].features];
-      updatedFeatures[featureIndex] = value;
-      updatedPackages[packageIndex] = {
-        ...updatedPackages[packageIndex],
-        features: updatedFeatures
-      };
-      setSiteData({
-        ...siteData,
-        packages: {
-          ...siteData.packages,
-          [tabId]: updatedPackages
-        }
-      });
-    }
+    addPackage(newPackage);
   };
 
   if (!isVisible) {
@@ -259,6 +101,16 @@ const AdminPanel = () => {
         >
           <Settings className="h-5 w-5" />
         </Button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <Card className="p-8">
+          <div className="text-center">Loading...</div>
+        </Card>
       </div>
     );
   }
@@ -328,101 +180,107 @@ const AdminPanel = () => {
               </TabsList>
 
               <TabsContent value="basic" className="space-y-4 mt-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="companyName">Company Name</Label>
-                    <Input
-                      id="companyName"
-                      value={siteData.companyName}
-                      onChange={(e) => setSiteData({...siteData, companyName: e.target.value})}
-                    />
+                {websiteConfig && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="companyName">Company Name</Label>
+                      <Input
+                        id="companyName"
+                        value={websiteConfig.company_name}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, company_name: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        value={websiteConfig.phone}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, phone: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        value={websiteConfig.email}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, email: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="whatsapp">WhatsApp Number (without +)</Label>
+                      <Input
+                        id="whatsapp"
+                        value={websiteConfig.whatsapp}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, whatsapp: e.target.value })}
+                        placeholder="911234567890"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Label htmlFor="logoUrl">Logo URL</Label>
+                      <Input
+                        id="logoUrl"
+                        value={websiteConfig.logo_url || ''}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, logo_url: e.target.value })}
+                        placeholder="https://example.com/logo.png"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      value={siteData.phone}
-                      onChange={(e) => setSiteData({...siteData, phone: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      value={siteData.email}
-                      onChange={(e) => setSiteData({...siteData, email: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="whatsapp">WhatsApp Number (without +)</Label>
-                    <Input
-                      id="whatsapp"
-                      value={siteData.whatsapp}
-                      onChange={(e) => setSiteData({...siteData, whatsapp: e.target.value})}
-                      placeholder="911234567890"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="logoUrl">Logo URL</Label>
-                  <Input
-                    id="logoUrl"
-                    value={siteData.logoUrl}
-                    onChange={(e) => setSiteData({...siteData, logoUrl: e.target.value})}
-                    placeholder="https://example.com/logo.png"
-                  />
-                </div>
+                )}
               </TabsContent>
 
               <TabsContent value="content" className="space-y-4 mt-6">
-                <div>
-                  <Label htmlFor="heroHeadline">Hero Headline</Label>
-                  <Input
-                    id="heroHeadline"
-                    value={siteData.heroHeadline}
-                    onChange={(e) => setSiteData({...siteData, heroHeadline: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="heroSubheadline">Hero Subheadline</Label>
-                  <Textarea
-                    id="heroSubheadline"
-                    value={siteData.heroSubheadline}
-                    onChange={(e) => setSiteData({...siteData, heroSubheadline: e.target.value})}
-                    rows={3}
-                  />
-                </div>
+                {websiteConfig && (
+                  <>
+                    <div>
+                      <Label htmlFor="heroHeadline">Hero Headline</Label>
+                      <Input
+                        id="heroHeadline"
+                        value={websiteConfig.hero_headline}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, hero_headline: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="heroSubheadline">Hero Subheadline</Label>
+                      <Textarea
+                        id="heroSubheadline"
+                        value={websiteConfig.hero_subheadline}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, hero_subheadline: e.target.value })}
+                        rows={3}
+                      />
+                    </div>
+                  </>
+                )}
               </TabsContent>
 
               <TabsContent value="pricing" className="space-y-4 mt-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Pricing Tabs Management</h3>
-                  <Button onClick={addPricingTab} size="sm">
+                  <Button onClick={handleAddPricingTab} size="sm">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Tab
                   </Button>
                 </div>
                 <div className="space-y-4">
-                  {siteData.pricingTabs.map((tab) => (
+                  {pricingTabs.map((tab) => (
                     <Card key={tab.id} className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex-1 grid grid-cols-2 gap-4">
                           <Input
                             placeholder="Tab Name"
                             value={tab.name}
-                            onChange={(e) => updatePricingTab(tab.id, 'name', e.target.value)}
+                            onChange={(e) => updatePricingTab(tab.id, { name: e.target.value })}
                           />
                           <div className="flex items-center space-x-2">
                             <input
                               type="checkbox"
                               checked={tab.active}
-                              onChange={(e) => updatePricingTab(tab.id, 'active', e.target.checked)}
+                              onChange={(e) => updatePricingTab(tab.id, { active: e.target.checked })}
                             />
                             <span className="text-sm">Active</span>
                           </div>
                         </div>
                         <Button
-                          onClick={() => removePricingTab(tab.id)}
+                          onClick={() => deletePricingTab(tab.id)}
                           variant="destructive"
                           size="sm"
                           className="ml-4"
@@ -437,17 +295,17 @@ const AdminPanel = () => {
 
               <TabsContent value="packages" className="space-y-6 mt-6">
                 <h3 className="text-lg font-semibold">Package Management</h3>
-                {siteData.pricingTabs.filter(tab => tab.active).map((tab) => (
+                {pricingTabs.filter(tab => tab.active).map((tab) => (
                   <Card key={tab.id} className="p-4">
                     <div className="flex justify-between items-center mb-4">
                       <h4 className="text-md font-medium">{tab.name} Packages</h4>
-                      <Button onClick={() => addPackage(tab.id)} size="sm">
+                      <Button onClick={() => handleAddPackage(tab.tab_id)} size="sm">
                         <Plus className="h-4 w-4 mr-2" />
                         Add Package
                       </Button>
                     </div>
                     <div className="space-y-4">
-                      {(siteData.packages[tab.id] || []).map((pkg) => (
+                      {(packages[tab.tab_id] || []).map((pkg) => (
                         <Card key={pkg.id} className="p-4 bg-gray-50">
                           <div className="flex justify-between items-start mb-4">
                             <div className="flex-1 grid grid-cols-2 gap-4">
@@ -455,19 +313,19 @@ const AdminPanel = () => {
                                 <Label>Package Name</Label>
                                 <Input
                                   value={pkg.name}
-                                  onChange={(e) => updatePackage(tab.id, pkg.id, 'name', e.target.value)}
+                                  onChange={(e) => updatePackage(pkg.id, { name: e.target.value })}
                                 />
                               </div>
                               <div>
                                 <Label>Price</Label>
                                 <Input
                                   value={pkg.price}
-                                  onChange={(e) => updatePackage(tab.id, pkg.id, 'price', e.target.value)}
+                                  onChange={(e) => updatePackage(pkg.id, { price: e.target.value })}
                                 />
                               </div>
                             </div>
                             <Button
-                              onClick={() => removePackage(tab.id, pkg.id)}
+                              onClick={() => deletePackage(pkg.id)}
                               variant="destructive"
                               size="sm"
                               className="ml-4"
@@ -478,7 +336,11 @@ const AdminPanel = () => {
                           <div>
                             <div className="flex justify-between items-center mb-2">
                               <Label>Features</Label>
-                              <Button onClick={() => addFeature(tab.id, pkg.id)} size="sm" variant="outline">
+                              <Button 
+                                onClick={() => updatePackage(pkg.id, { features: [...pkg.features, 'New Feature'] })}
+                                size="sm" 
+                                variant="outline"
+                              >
                                 <Plus className="h-4 w-4 mr-1" />
                                 Add Feature
                               </Button>
@@ -488,11 +350,18 @@ const AdminPanel = () => {
                                 <div key={index} className="flex gap-2">
                                   <Input
                                     value={feature}
-                                    onChange={(e) => updateFeature(tab.id, pkg.id, index, e.target.value)}
+                                    onChange={(e) => {
+                                      const newFeatures = [...pkg.features];
+                                      newFeatures[index] = e.target.value;
+                                      updatePackage(pkg.id, { features: newFeatures });
+                                    }}
                                     className="flex-1"
                                   />
                                   <Button
-                                    onClick={() => removeFeature(tab.id, pkg.id, index)}
+                                    onClick={() => {
+                                      const newFeatures = pkg.features.filter((_, i) => i !== index);
+                                      updatePackage(pkg.id, { features: newFeatures });
+                                    }}
                                     variant="outline"
                                     size="sm"
                                   >
@@ -512,18 +381,18 @@ const AdminPanel = () => {
               <TabsContent value="testimonials" className="space-y-4 mt-6">
                 <div className="flex justify-between items-center">
                   <Label>Customer Testimonials</Label>
-                  <Button onClick={addTestimonial} size="sm">
+                  <Button onClick={handleAddTestimonial} size="sm">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Testimonial
                   </Button>
                 </div>
                 <div className="space-y-4 mt-2">
-                  {siteData.testimonials.map((testimonial) => (
+                  {testimonials.map((testimonial) => (
                     <Card key={testimonial.id} className="p-4">
                       <div className="flex justify-between items-start mb-4">
-                        <h4 className="font-medium">Testimonial #{testimonial.id}</h4>
+                        <h4 className="font-medium">Testimonial</h4>
                         <Button
-                          onClick={() => removeTestimonial(testimonial.id)}
+                          onClick={() => deleteTestimonial(testimonial.id)}
                           variant="destructive"
                           size="sm"
                         >
@@ -534,18 +403,18 @@ const AdminPanel = () => {
                         <Input
                           placeholder="Customer Name"
                           value={testimonial.name}
-                          onChange={(e) => updateTestimonial(testimonial.id, 'name', e.target.value)}
+                          onChange={(e) => updateTestimonial(testimonial.id, { name: e.target.value })}
                         />
                         <Input
                           placeholder="Company Name"
                           value={testimonial.company}
-                          onChange={(e) => updateTestimonial(testimonial.id, 'company', e.target.value)}
+                          onChange={(e) => updateTestimonial(testimonial.id, { company: e.target.value })}
                         />
                       </div>
                       <Textarea
                         placeholder="Testimonial text"
                         value={testimonial.text}
-                        onChange={(e) => updateTestimonial(testimonial.id, 'text', e.target.value)}
+                        onChange={(e) => updateTestimonial(testimonial.id, { text: e.target.value })}
                         className="mb-4"
                         rows={2}
                       />
@@ -556,7 +425,7 @@ const AdminPanel = () => {
                           min="1"
                           max="5"
                           value={testimonial.rating}
-                          onChange={(e) => updateTestimonial(testimonial.id, 'rating', parseInt(e.target.value))}
+                          onChange={(e) => updateTestimonial(testimonial.id, { rating: parseInt(e.target.value) })}
                         />
                       </div>
                     </Card>
@@ -565,65 +434,71 @@ const AdminPanel = () => {
               </TabsContent>
 
               <TabsContent value="seo" className="space-y-4 mt-6">
-                <div>
-                  <Label htmlFor="seoTitle">SEO Title</Label>
-                  <Input
-                    id="seoTitle"
-                    value={siteData.seoTitle}
-                    onChange={(e) => setSiteData({...siteData, seoTitle: e.target.value})}
-                    placeholder="Page title for search engines"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="seoDescription">SEO Description</Label>
-                  <Textarea
-                    id="seoDescription"
-                    value={siteData.seoDescription}
-                    onChange={(e) => setSiteData({...siteData, seoDescription: e.target.value})}
-                    placeholder="Meta description for search engines"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="seoKeywords">SEO Keywords</Label>
-                  <Input
-                    id="seoKeywords"
-                    value={siteData.seoKeywords}
-                    onChange={(e) => setSiteData({...siteData, seoKeywords: e.target.value})}
-                    placeholder="keyword1, keyword2, keyword3"
-                  />
-                </div>
+                {websiteConfig && (
+                  <>
+                    <div>
+                      <Label htmlFor="seoTitle">SEO Title</Label>
+                      <Input
+                        id="seoTitle"
+                        value={websiteConfig.seo_title}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, seo_title: e.target.value })}
+                        placeholder="Page title for search engines"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="seoDescription">SEO Description</Label>
+                      <Textarea
+                        id="seoDescription"
+                        value={websiteConfig.seo_description}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, seo_description: e.target.value })}
+                        placeholder="Meta description for search engines"
+                        rows={3}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="seoKeywords">SEO Keywords</Label>
+                      <Input
+                        id="seoKeywords"
+                        value={websiteConfig.seo_keywords}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, seo_keywords: e.target.value })}
+                        placeholder="keyword1, keyword2, keyword3"
+                      />
+                    </div>
+                  </>
+                )}
               </TabsContent>
 
               <TabsContent value="leads" className="space-y-4 mt-6">
-                <div>
-                  <Label htmlFor="leadWebhookUrl">Lead Webhook URL</Label>
-                  <Input
-                    id="leadWebhookUrl"
-                    value={siteData.leadWebhookUrl}
-                    onChange={(e) => setSiteData({...siteData, leadWebhookUrl: e.target.value})}
-                    placeholder="https://your-webhook-url.com/leads"
-                  />
-                  <p className="text-sm text-gray-600 mt-2">
-                    When someone submits the lead form, data will be sent to this URL as a POST request.
-                  </p>
-                </div>
-                <div>
-                  <Label htmlFor="leadEmail">Lead Email Address</Label>
-                  <Input
-                    id="leadEmail"
-                    type="email"
-                    value={siteData.leadEmail}
-                    onChange={(e) => setSiteData({...siteData, leadEmail: e.target.value})}
-                    placeholder="leads@yourcompany.com"
-                  />
-                  <p className="text-sm text-gray-600 mt-2">
-                    Leads will also be sent to this email address.
-                  </p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded">
-                  <h4 className="font-medium mb-2">Webhook Payload Format:</h4>
-                  <pre className="text-xs text-gray-700">
+                {websiteConfig && (
+                  <>
+                    <div>
+                      <Label htmlFor="leadWebhookUrl">Lead Webhook URL</Label>
+                      <Input
+                        id="leadWebhookUrl"
+                        value={websiteConfig.lead_webhook_url || ''}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, lead_webhook_url: e.target.value })}
+                        placeholder="https://your-webhook-url.com/leads"
+                      />
+                      <p className="text-sm text-gray-600 mt-2">
+                        When someone submits the lead form, data will be sent to this URL as a POST request.
+                      </p>
+                    </div>
+                    <div>
+                      <Label htmlFor="leadEmail">Lead Email Address</Label>
+                      <Input
+                        id="leadEmail"
+                        type="email"
+                        value={websiteConfig.lead_email}
+                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, lead_email: e.target.value })}
+                        placeholder="leads@yourcompany.com"
+                      />
+                      <p className="text-sm text-gray-600 mt-2">
+                        Leads will also be sent to this email address.
+                      </p>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded">
+                      <h4 className="font-medium mb-2">Webhook Payload Format:</h4>
+                      <pre className="text-xs text-gray-700">
 {`{
   "name": "Customer Name",
   "phone": "+91 9876543210", 
@@ -631,12 +506,14 @@ const AdminPanel = () => {
   "service": "ivr|tollfree|both",
   "timestamp": "2024-01-01T00:00:00Z"
 }`}
-                  </pre>
-                </div>
+                      </pre>
+                    </div>
+                  </>
+                )}
               </TabsContent>
 
               <div className="flex justify-end space-x-4 mt-6 pt-6 border-t">
-                <Button onClick={handleSave} className="flex items-center space-x-2">
+                <Button onClick={handleSaveWebsiteConfig} className="flex items-center space-x-2">
                   <Save className="h-4 w-4" />
                   <span>Save Changes</span>
                 </Button>

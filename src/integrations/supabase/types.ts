@@ -9,7 +9,212 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          password_hash: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          password_hash: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          password_hash?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string
+          phone: string
+          service: string
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          phone: string
+          service: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string
+          service?: string
+        }
+        Relationships: []
+      }
+      packages: {
+        Row: {
+          created_at: string | null
+          features: string[]
+          id: string
+          name: string
+          price: string
+          sort_order: number | null
+          tab_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          features?: string[]
+          id?: string
+          name: string
+          price: string
+          sort_order?: number | null
+          tab_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          features?: string[]
+          id?: string
+          name?: string
+          price?: string
+          sort_order?: number | null
+          tab_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packages_tab_id_fkey"
+            columns: ["tab_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_tabs"
+            referencedColumns: ["tab_id"]
+          },
+        ]
+      }
+      pricing_tabs: {
+        Row: {
+          active: boolean
+          created_at: string | null
+          id: string
+          name: string
+          sort_order: number | null
+          tab_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string | null
+          id?: string
+          name: string
+          sort_order?: number | null
+          tab_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string | null
+          id?: string
+          name?: string
+          sort_order?: number | null
+          tab_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          company: string
+          created_at: string | null
+          id: string
+          name: string
+          rating: number
+          text: string
+          updated_at: string | null
+        }
+        Insert: {
+          company: string
+          created_at?: string | null
+          id?: string
+          name: string
+          rating: number
+          text: string
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          rating?: number
+          text?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      website_config: {
+        Row: {
+          company_name: string
+          created_at: string | null
+          email: string
+          hero_headline: string
+          hero_subheadline: string
+          id: string
+          lead_email: string
+          lead_webhook_url: string | null
+          logo_url: string | null
+          phone: string
+          seo_description: string
+          seo_keywords: string
+          seo_title: string
+          updated_at: string | null
+          whatsapp: string
+        }
+        Insert: {
+          company_name?: string
+          created_at?: string | null
+          email?: string
+          hero_headline?: string
+          hero_subheadline?: string
+          id?: string
+          lead_email?: string
+          lead_webhook_url?: string | null
+          logo_url?: string | null
+          phone?: string
+          seo_description?: string
+          seo_keywords?: string
+          seo_title?: string
+          updated_at?: string | null
+          whatsapp?: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string | null
+          email?: string
+          hero_headline?: string
+          hero_subheadline?: string
+          id?: string
+          lead_email?: string
+          lead_webhook_url?: string | null
+          logo_url?: string | null
+          phone?: string
+          seo_description?: string
+          seo_keywords?: string
+          seo_title?: string
+          updated_at?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
