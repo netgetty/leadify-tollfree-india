@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,9 @@ const AdminPanel = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // Local state for form data to prevent auto-save
+  const [localWebsiteConfig, setLocalWebsiteConfig] = useState<any>(null);
   
   const {
     websiteConfig,
@@ -33,6 +35,13 @@ const AdminPanel = () => {
     updatePackage,
     deletePackage
   } = useSupabaseData();
+
+  // Initialize local config when websiteConfig loads
+  React.useEffect(() => {
+    if (websiteConfig && !localWebsiteConfig) {
+      setLocalWebsiteConfig({ ...websiteConfig });
+    }
+  }, [websiteConfig, localWebsiteConfig]);
 
   const adminCredentials = {
     username: 'admin',
@@ -55,9 +64,18 @@ const AdminPanel = () => {
     toast.success('Logged out successfully!');
   };
 
+  // Handle local config changes (no auto-save)
+  const handleConfigChange = (field: string, value: string) => {
+    setLocalWebsiteConfig((prev: any) => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Manual save function
   const handleSaveWebsiteConfig = () => {
-    if (websiteConfig) {
-      saveWebsiteConfig(websiteConfig);
+    if (localWebsiteConfig) {
+      saveWebsiteConfig(localWebsiteConfig);
     }
   };
 
@@ -180,38 +198,38 @@ const AdminPanel = () => {
               </TabsList>
 
               <TabsContent value="basic" className="space-y-4 mt-6">
-                {websiteConfig && (
+                {localWebsiteConfig && (
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="companyName">Company Name</Label>
                       <Input
                         id="companyName"
-                        value={websiteConfig.company_name}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, company_name: e.target.value })}
+                        value={localWebsiteConfig.company_name}
+                        onChange={(e) => handleConfigChange('company_name', e.target.value)}
                       />
                     </div>
                     <div>
                       <Label htmlFor="phone">Phone Number</Label>
                       <Input
                         id="phone"
-                        value={websiteConfig.phone}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, phone: e.target.value })}
+                        value={localWebsiteConfig.phone}
+                        onChange={(e) => handleConfigChange('phone', e.target.value)}
                       />
                     </div>
                     <div>
                       <Label htmlFor="email">Email</Label>
                       <Input
                         id="email"
-                        value={websiteConfig.email}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, email: e.target.value })}
+                        value={localWebsiteConfig.email}
+                        onChange={(e) => handleConfigChange('email', e.target.value)}
                       />
                     </div>
                     <div>
                       <Label htmlFor="whatsapp">WhatsApp Number (without +)</Label>
                       <Input
                         id="whatsapp"
-                        value={websiteConfig.whatsapp}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, whatsapp: e.target.value })}
+                        value={localWebsiteConfig.whatsapp}
+                        onChange={(e) => handleConfigChange('whatsapp', e.target.value)}
                         placeholder="911234567890"
                       />
                     </div>
@@ -219,8 +237,8 @@ const AdminPanel = () => {
                       <Label htmlFor="logoUrl">Logo URL</Label>
                       <Input
                         id="logoUrl"
-                        value={websiteConfig.logo_url || ''}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, logo_url: e.target.value })}
+                        value={localWebsiteConfig.logo_url || ''}
+                        onChange={(e) => handleConfigChange('logo_url', e.target.value)}
                         placeholder="https://example.com/logo.png"
                       />
                     </div>
@@ -229,22 +247,22 @@ const AdminPanel = () => {
               </TabsContent>
 
               <TabsContent value="content" className="space-y-4 mt-6">
-                {websiteConfig && (
+                {localWebsiteConfig && (
                   <>
                     <div>
                       <Label htmlFor="heroHeadline">Hero Headline</Label>
                       <Input
                         id="heroHeadline"
-                        value={websiteConfig.hero_headline}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, hero_headline: e.target.value })}
+                        value={localWebsiteConfig.hero_headline}
+                        onChange={(e) => handleConfigChange('hero_headline', e.target.value)}
                       />
                     </div>
                     <div>
                       <Label htmlFor="heroSubheadline">Hero Subheadline</Label>
                       <Textarea
                         id="heroSubheadline"
-                        value={websiteConfig.hero_subheadline}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, hero_subheadline: e.target.value })}
+                        value={localWebsiteConfig.hero_subheadline}
+                        onChange={(e) => handleConfigChange('hero_subheadline', e.target.value)}
                         rows={3}
                       />
                     </div>
@@ -434,14 +452,14 @@ const AdminPanel = () => {
               </TabsContent>
 
               <TabsContent value="seo" className="space-y-4 mt-6">
-                {websiteConfig && (
+                {localWebsiteConfig && (
                   <>
                     <div>
                       <Label htmlFor="seoTitle">SEO Title</Label>
                       <Input
                         id="seoTitle"
-                        value={websiteConfig.seo_title}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, seo_title: e.target.value })}
+                        value={localWebsiteConfig.seo_title}
+                        onChange={(e) => handleConfigChange('seo_title', e.target.value)}
                         placeholder="Page title for search engines"
                       />
                     </div>
@@ -449,8 +467,8 @@ const AdminPanel = () => {
                       <Label htmlFor="seoDescription">SEO Description</Label>
                       <Textarea
                         id="seoDescription"
-                        value={websiteConfig.seo_description}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, seo_description: e.target.value })}
+                        value={localWebsiteConfig.seo_description}
+                        onChange={(e) => handleConfigChange('seo_description', e.target.value)}
                         placeholder="Meta description for search engines"
                         rows={3}
                       />
@@ -459,8 +477,8 @@ const AdminPanel = () => {
                       <Label htmlFor="seoKeywords">SEO Keywords</Label>
                       <Input
                         id="seoKeywords"
-                        value={websiteConfig.seo_keywords}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, seo_keywords: e.target.value })}
+                        value={localWebsiteConfig.seo_keywords}
+                        onChange={(e) => handleConfigChange('seo_keywords', e.target.value)}
                         placeholder="keyword1, keyword2, keyword3"
                       />
                     </div>
@@ -469,14 +487,14 @@ const AdminPanel = () => {
               </TabsContent>
 
               <TabsContent value="leads" className="space-y-4 mt-6">
-                {websiteConfig && (
+                {localWebsiteConfig && (
                   <>
                     <div>
                       <Label htmlFor="leadWebhookUrl">Lead Webhook URL</Label>
                       <Input
                         id="leadWebhookUrl"
-                        value={websiteConfig.lead_webhook_url || ''}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, lead_webhook_url: e.target.value })}
+                        value={localWebsiteConfig.lead_webhook_url || ''}
+                        onChange={(e) => handleConfigChange('lead_webhook_url', e.target.value)}
                         placeholder="https://your-webhook-url.com/leads"
                       />
                       <p className="text-sm text-gray-600 mt-2">
@@ -488,8 +506,8 @@ const AdminPanel = () => {
                       <Input
                         id="leadEmail"
                         type="email"
-                        value={websiteConfig.lead_email}
-                        onChange={(e) => saveWebsiteConfig({ ...websiteConfig, lead_email: e.target.value })}
+                        value={localWebsiteConfig.lead_email}
+                        onChange={(e) => handleConfigChange('lead_email', e.target.value)}
                         placeholder="leads@yourcompany.com"
                       />
                       <p className="text-sm text-gray-600 mt-2">
