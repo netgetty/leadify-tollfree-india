@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,14 +16,18 @@ const AdminPanel = () => {
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
-  // Local state for form data to prevent auto-save
+  // Local state for all form data to prevent auto-save
   const [localWebsiteConfig, setLocalWebsiteConfig] = useState<any>(null);
+  const [localTestimonials, setLocalTestimonials] = useState<any[]>([]);
+  const [localPricingTabs, setLocalPricingTabs] = useState<any[]>([]);
+  const [localPackages, setLocalPackages] = useState<any>({});
   
   const {
     websiteConfig,
     testimonials,
     pricingTabs,
     packages,
+    leads,
     loading,
     saveWebsiteConfig,
     addTestimonial,
@@ -33,15 +38,34 @@ const AdminPanel = () => {
     deletePricingTab,
     addPackage,
     updatePackage,
-    deletePackage
+    deletePackage,
+    deleteLeads
   } = useSupabaseData();
 
-  // Initialize local config when websiteConfig loads
+  // Initialize local states when data loads
   React.useEffect(() => {
     if (websiteConfig && !localWebsiteConfig) {
       setLocalWebsiteConfig({ ...websiteConfig });
     }
   }, [websiteConfig, localWebsiteConfig]);
+
+  React.useEffect(() => {
+    if (testimonials.length > 0 && localTestimonials.length === 0) {
+      setLocalTestimonials([...testimonials]);
+    }
+  }, [testimonials, localTestimonials]);
+
+  React.useEffect(() => {
+    if (pricingTabs.length > 0 && localPricingTabs.length === 0) {
+      setLocalPricingTabs([...pricingTabs]);
+    }
+  }, [pricingTabs, localPricingTabs]);
+
+  React.useEffect(() => {
+    if (Object.keys(packages).length > 0 && Object.keys(localPackages).length === 0) {
+      setLocalPackages({ ...packages });
+    }
+  }, [packages, localPackages]);
 
   const adminCredentials = {
     username: 'admin',
@@ -79,35 +103,99 @@ const AdminPanel = () => {
     }
   };
 
+  // Local testimonial handlers
+  const handleLocalTestimonialChange = (index: number, field: string, value: any) => {
+    setLocalTestimonials(prev => 
+      prev.map((testimonial, i) => 
+        i === index ? { ...testimonial, [field]: value } : testimonial
+      )
+    );
+  };
+
+  const handleSaveTestimonial = (index: number) => {
+    const testimonial = localTestimonials[index];
+    if (testimonial.id) {
+      updateTestimonial(testimonial.id, testimonial);
+    }
+  };
+
   const handleAddTestimonial = () => {
     const newTestimonial = {
+      id: null,
       name: '',
       company: '',
       text: '',
       rating: 5
     };
+    setLocalTestimonials(prev => [...prev, newTestimonial]);
     addTestimonial(newTestimonial);
+  };
+
+  // Local pricing tab handlers
+  const handleLocalPricingTabChange = (index: number, field: string, value: any) => {
+    setLocalPricingTabs(prev => 
+      prev.map((tab, i) => 
+        i === index ? { ...tab, [field]: value } : tab
+      )
+    );
+  };
+
+  const handleSavePricingTab = (index: number) => {
+    const tab = localPricingTabs[index];
+    if (tab.id) {
+      updatePricingTab(tab.id, tab);
+    }
   };
 
   const handleAddPricingTab = () => {
     const newTab = {
+      id: null,
       tab_id: `tab_${Date.now()}`,
       name: 'New Tab',
       active: true,
-      sort_order: pricingTabs.length + 1
+      sort_order: localPricingTabs.length + 1
     };
+    setLocalPricingTabs(prev => [...prev, newTab]);
     addPricingTab(newTab);
+  };
+
+  // Local package handlers
+  const handleLocalPackageChange = (tabId: string, packageIndex: number, field: string, value: any) => {
+    setLocalPackages(prev => ({
+      ...prev,
+      [tabId]: prev[tabId]?.map((pkg: any, i: number) => 
+        i === packageIndex ? { ...pkg, [field]: value } : pkg
+      ) || []
+    }));
+  };
+
+  const handleSavePackage = (tabId: string, packageIndex: number) => {
+    const pkg = localPackages[tabId]?.[packageIndex];
+    if (pkg?.id) {
+      updatePackage(pkg.id, pkg);
+    }
   };
 
   const handleAddPackage = (tabId: string) => {
     const newPackage = {
+      id: null,
       tab_id: tabId,
       name: 'New Package',
       price: '₹999',
       features: ['Feature 1', 'Feature 2'],
-      sort_order: (packages[tabId]?.length || 0) + 1
+      sort_order: (localPackages[tabId]?.length || 0) + 1
     };
+    setLocalPackages(prev => ({
+      ...prev,
+      [tabId]: [...(prev[tabId] || []), newPackage]
+    }));
     addPackage(newPackage);
+  };
+
+  const handleDeleteLead = async (leadId: string) => {
+    if (confirm('Are you sure you want to delete this lead?')) {
+      await deleteLeads(leadId);
+    }
   };
 
   if (!isVisible) {
@@ -187,7 +275,7 @@ const AdminPanel = () => {
             </form>
           ) : (
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-7">
+              <TabsList className="grid w-full grid-cols-8">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="content">Content</TabsTrigger>
                 <TabsTrigger value="pricing">Pricing</TabsTrigger>
@@ -195,8 +283,10 @@ const AdminPanel = () => {
                 <TabsTrigger value="testimonials">Reviews</TabsTrigger>
                 <TabsTrigger value="seo">SEO</TabsTrigger>
                 <TabsTrigger value="leads">Leads</TabsTrigger>
+                <TabsTrigger value="manage-leads">Manage Leads</TabsTrigger>
               </TabsList>
 
+              {/* Basic Info Tab */}
               <TabsContent value="basic" className="space-y-4 mt-6">
                 {localWebsiteConfig && (
                   <div className="grid grid-cols-2 gap-4">
@@ -246,6 +336,7 @@ const AdminPanel = () => {
                 )}
               </TabsContent>
 
+              {/* Content Tab */}
               <TabsContent value="content" className="space-y-4 mt-6">
                 {localWebsiteConfig && (
                   <>
@@ -270,6 +361,7 @@ const AdminPanel = () => {
                 )}
               </TabsContent>
 
+              {/* Pricing Tab */}
               <TabsContent value="pricing" className="space-y-4 mt-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Pricing Tabs Management</h3>
@@ -279,26 +371,30 @@ const AdminPanel = () => {
                   </Button>
                 </div>
                 <div className="space-y-4">
-                  {pricingTabs.map((tab) => (
-                    <Card key={tab.id} className="p-4">
+                  {localPricingTabs.map((tab, index) => (
+                    <Card key={tab.id || index} className="p-4">
                       <div className="flex items-center justify-between">
-                        <div className="flex-1 grid grid-cols-2 gap-4">
+                        <div className="flex-1 grid grid-cols-3 gap-4">
                           <Input
                             placeholder="Tab Name"
                             value={tab.name}
-                            onChange={(e) => updatePricingTab(tab.id, { name: e.target.value })}
+                            onChange={(e) => handleLocalPricingTabChange(index, 'name', e.target.value)}
                           />
                           <div className="flex items-center space-x-2">
                             <input
                               type="checkbox"
                               checked={tab.active}
-                              onChange={(e) => updatePricingTab(tab.id, { active: e.target.checked })}
+                              onChange={(e) => handleLocalPricingTabChange(index, 'active', e.target.checked)}
                             />
                             <span className="text-sm">Active</span>
                           </div>
+                          <Button onClick={() => handleSavePricingTab(index)} size="sm" variant="outline">
+                            <Save className="h-4 w-4 mr-1" />
+                            Save
+                          </Button>
                         </div>
                         <Button
-                          onClick={() => deletePricingTab(tab.id)}
+                          onClick={() => tab.id && deletePricingTab(tab.id)}
                           variant="destructive"
                           size="sm"
                           className="ml-4"
@@ -311,9 +407,10 @@ const AdminPanel = () => {
                 </div>
               </TabsContent>
 
+              {/* Packages Tab */}
               <TabsContent value="packages" className="space-y-6 mt-6">
                 <h3 className="text-lg font-semibold">Package Management</h3>
-                {pricingTabs.filter(tab => tab.active).map((tab) => (
+                {localPricingTabs.filter(tab => tab.active).map((tab) => (
                   <Card key={tab.id} className="p-4">
                     <div className="flex justify-between items-center mb-4">
                       <h4 className="text-md font-medium">{tab.name} Packages</h4>
@@ -323,27 +420,31 @@ const AdminPanel = () => {
                       </Button>
                     </div>
                     <div className="space-y-4">
-                      {(packages[tab.tab_id] || []).map((pkg) => (
-                        <Card key={pkg.id} className="p-4 bg-gray-50">
+                      {(localPackages[tab.tab_id] || []).map((pkg: any, packageIndex: number) => (
+                        <Card key={pkg.id || packageIndex} className="p-4 bg-gray-50">
                           <div className="flex justify-between items-start mb-4">
-                            <div className="flex-1 grid grid-cols-2 gap-4">
+                            <div className="flex-1 grid grid-cols-3 gap-4">
                               <div>
                                 <Label>Package Name</Label>
                                 <Input
                                   value={pkg.name}
-                                  onChange={(e) => updatePackage(pkg.id, { name: e.target.value })}
+                                  onChange={(e) => handleLocalPackageChange(tab.tab_id, packageIndex, 'name', e.target.value)}
                                 />
                               </div>
                               <div>
                                 <Label>Price</Label>
                                 <Input
                                   value={pkg.price}
-                                  onChange={(e) => updatePackage(pkg.id, { price: e.target.value })}
+                                  onChange={(e) => handleLocalPackageChange(tab.tab_id, packageIndex, 'price', e.target.value)}
                                 />
                               </div>
+                              <Button onClick={() => handleSavePackage(tab.tab_id, packageIndex)} size="sm" variant="outline">
+                                <Save className="h-4 w-4 mr-1" />
+                                Save
+                              </Button>
                             </div>
                             <Button
-                              onClick={() => deletePackage(pkg.id)}
+                              onClick={() => pkg.id && deletePackage(pkg.id)}
                               variant="destructive"
                               size="sm"
                               className="ml-4"
@@ -355,7 +456,7 @@ const AdminPanel = () => {
                             <div className="flex justify-between items-center mb-2">
                               <Label>Features</Label>
                               <Button 
-                                onClick={() => updatePackage(pkg.id, { features: [...pkg.features, 'New Feature'] })}
+                                onClick={() => handleLocalPackageChange(tab.tab_id, packageIndex, 'features', [...pkg.features, 'New Feature'])}
                                 size="sm" 
                                 variant="outline"
                               >
@@ -364,21 +465,21 @@ const AdminPanel = () => {
                               </Button>
                             </div>
                             <div className="space-y-2">
-                              {pkg.features.map((feature, index) => (
-                                <div key={index} className="flex gap-2">
+                              {pkg.features.map((feature: string, featureIndex: number) => (
+                                <div key={featureIndex} className="flex gap-2">
                                   <Input
                                     value={feature}
                                     onChange={(e) => {
                                       const newFeatures = [...pkg.features];
-                                      newFeatures[index] = e.target.value;
-                                      updatePackage(pkg.id, { features: newFeatures });
+                                      newFeatures[featureIndex] = e.target.value;
+                                      handleLocalPackageChange(tab.tab_id, packageIndex, 'features', newFeatures);
                                     }}
                                     className="flex-1"
                                   />
                                   <Button
                                     onClick={() => {
-                                      const newFeatures = pkg.features.filter((_, i) => i !== index);
-                                      updatePackage(pkg.id, { features: newFeatures });
+                                      const newFeatures = pkg.features.filter((_: any, i: number) => i !== featureIndex);
+                                      handleLocalPackageChange(tab.tab_id, packageIndex, 'features', newFeatures);
                                     }}
                                     variant="outline"
                                     size="sm"
@@ -396,6 +497,7 @@ const AdminPanel = () => {
                 ))}
               </TabsContent>
 
+              {/* Testimonials Tab */}
               <TabsContent value="testimonials" className="space-y-4 mt-6">
                 <div className="flex justify-between items-center">
                   <Label>Customer Testimonials</Label>
@@ -405,34 +507,44 @@ const AdminPanel = () => {
                   </Button>
                 </div>
                 <div className="space-y-4 mt-2">
-                  {testimonials.map((testimonial) => (
-                    <Card key={testimonial.id} className="p-4">
+                  {localTestimonials.map((testimonial, index) => (
+                    <Card key={testimonial.id || index} className="p-4">
                       <div className="flex justify-between items-start mb-4">
                         <h4 className="font-medium">Testimonial</h4>
-                        <Button
-                          onClick={() => deleteTestimonial(testimonial.id)}
-                          variant="destructive"
-                          size="sm"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => handleSaveTestimonial(index)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            <Save className="h-4 w-4 mr-1" />
+                            Save
+                          </Button>
+                          <Button
+                            onClick={() => testimonial.id && deleteTestimonial(testimonial.id)}
+                            variant="destructive"
+                            size="sm"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <Input
                           placeholder="Customer Name"
                           value={testimonial.name}
-                          onChange={(e) => updateTestimonial(testimonial.id, { name: e.target.value })}
+                          onChange={(e) => handleLocalTestimonialChange(index, 'name', e.target.value)}
                         />
                         <Input
                           placeholder="Company Name"
                           value={testimonial.company}
-                          onChange={(e) => updateTestimonial(testimonial.id, { company: e.target.value })}
+                          onChange={(e) => handleLocalTestimonialChange(index, 'company', e.target.value)}
                         />
                       </div>
                       <Textarea
                         placeholder="Testimonial text"
                         value={testimonial.text}
-                        onChange={(e) => updateTestimonial(testimonial.id, { text: e.target.value })}
+                        onChange={(e) => handleLocalTestimonialChange(index, 'text', e.target.value)}
                         className="mb-4"
                         rows={2}
                       />
@@ -443,7 +555,7 @@ const AdminPanel = () => {
                           min="1"
                           max="5"
                           value={testimonial.rating}
-                          onChange={(e) => updateTestimonial(testimonial.id, { rating: parseInt(e.target.value) })}
+                          onChange={(e) => handleLocalTestimonialChange(index, 'rating', parseInt(e.target.value))}
                         />
                       </div>
                     </Card>
@@ -451,6 +563,7 @@ const AdminPanel = () => {
                 </div>
               </TabsContent>
 
+              {/* SEO Tab */}
               <TabsContent value="seo" className="space-y-4 mt-6">
                 {localWebsiteConfig && (
                   <>
@@ -486,6 +599,7 @@ const AdminPanel = () => {
                 )}
               </TabsContent>
 
+              {/* Leads Tab */}
               <TabsContent value="leads" className="space-y-4 mt-6">
                 {localWebsiteConfig && (
                   <>
@@ -527,6 +641,74 @@ const AdminPanel = () => {
                       </pre>
                     </div>
                   </>
+                )}
+              </TabsContent>
+
+              {/* Manage Leads Tab */}
+              <TabsContent value="manage-leads" className="space-y-4 mt-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Manage Leads</h3>
+                  <div className="text-sm text-gray-600">
+                    Total Leads: {leads?.length || 0}
+                  </div>
+                </div>
+                
+                {leads && leads.length > 0 ? (
+                  <div className="border rounded-lg overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Service</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {leads.map((lead) => (
+                          <TableRow key={lead.id}>
+                            <TableCell className="font-medium">{lead.name}</TableCell>
+                            <TableCell>{lead.phone}</TableCell>
+                            <TableCell>{lead.email || 'N/A'}</TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                lead.service === 'ivr' ? 'bg-blue-100 text-blue-800' :
+                                lead.service === 'tollfree' ? 'bg-green-100 text-green-800' :
+                                'bg-purple-100 text-purple-800'
+                              }`}>
+                                {lead.service.toUpperCase()}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              {new Date(lead.created_at).toLocaleDateString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                onClick={() => handleDeleteLead(lead.id)}
+                                variant="destructive"
+                                size="sm"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No leads found</p>
+                    <p className="text-sm">Leads will appear here when customers submit the contact form</p>
+                  </div>
                 )}
               </TabsContent>
 

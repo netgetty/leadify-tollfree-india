@@ -44,11 +44,21 @@ interface Package {
   sort_order: number | null;
 }
 
+interface Lead {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  service: string;
+  created_at: string;
+}
+
 export const useSupabaseData = () => {
   const [websiteConfig, setWebsiteConfig] = useState<WebsiteConfig | null>(null);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [pricingTabs, setPricingTabs] = useState<PricingTab[]>([]);
   const [packages, setPackages] = useState<{ [key: string]: Package[] }>({});
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Load all data
@@ -111,6 +121,18 @@ export const useSupabaseData = () => {
         });
         setPackages(groupedPackages);
       }
+
+      // Load leads
+      const { data: leadsData, error: leadsError } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (leadsError) {
+        console.error('Error loading leads:', leadsError);
+      } else {
+        setLeads(leadsData || []);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
       toast.error('Failed to load data');
@@ -167,6 +189,7 @@ export const useSupabaseData = () => {
       if (error) throw error;
       
       await loadData();
+      toast.success('Testimonial updated successfully!');
     } catch (error) {
       console.error('Error updating testimonial:', error);
       toast.error('Failed to update testimonial');
@@ -217,6 +240,7 @@ export const useSupabaseData = () => {
       if (error) throw error;
       
       await loadData();
+      toast.success('Pricing tab updated successfully!');
     } catch (error) {
       console.error('Error updating pricing tab:', error);
       toast.error('Failed to update pricing tab');
@@ -267,6 +291,7 @@ export const useSupabaseData = () => {
       if (error) throw error;
       
       await loadData();
+      toast.success('Package updated successfully!');
     } catch (error) {
       console.error('Error updating package:', error);
       toast.error('Failed to update package');
@@ -290,6 +315,24 @@ export const useSupabaseData = () => {
     }
   };
 
+  // Lead operations
+  const deleteLeads = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      await loadData();
+      toast.success('Lead deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+      toast.error('Failed to delete lead');
+    }
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -299,6 +342,7 @@ export const useSupabaseData = () => {
     testimonials,
     pricingTabs,
     packages,
+    leads,
     loading,
     saveWebsiteConfig,
     addTestimonial,
@@ -310,6 +354,7 @@ export const useSupabaseData = () => {
     addPackage,
     updatePackage,
     deletePackage,
+    deleteLeads,
     reloadData: loadData
   };
 };
