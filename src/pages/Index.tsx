@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -181,102 +182,123 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Enhanced Hero Section */}
-      <section className="relative py-12 md:py-20 lg:py-28 overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 opacity-5"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+      {/* Enhanced Hero Section with Premium Background and Typography */}
+      <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+        {/* Premium Multi-layered Background */}
+        <div className="absolute inset-0">
+          {/* Base gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900"></div>
+          
+          {/* Animated gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-purple-600/30 to-pink-600/30 animate-pulse"></div>
+          
+          {/* Geometric pattern overlay */}
+          <div className="absolute inset-0 opacity-10" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='10' height='10' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 10 0 L 0 0 0 10' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23grid)' /%3E%3C/svg%3E")`,
+          }}></div>
+          
+          {/* Floating elements */}
+          <div className="absolute top-20 left-10 w-20 h-20 bg-blue-400/20 rounded-full blur-xl animate-bounce"></div>
+          <div className="absolute top-40 right-20 w-16 h-16 bg-purple-400/20 rounded-full blur-xl animate-bounce" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-pink-400/20 rounded-full blur-xl animate-bounce" style={{ animationDelay: '2s' }}></div>
+        </div>
         
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-6xl mx-auto">
-            {/* Trust Badges */}
-            <div className="flex flex-wrap justify-center items-center gap-4 mb-8 opacity-80">
-              <Badge variant="secondary" className="bg-green-100 text-green-800 px-3 py-1 text-sm">
-                <Users className="h-4 w-4 mr-1" />
+          <div className="max-w-7xl mx-auto">
+            {/* Trust Badges with Premium Styling */}
+            <div className="flex flex-wrap justify-center items-center gap-4 mb-12 opacity-90">
+              <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 text-sm font-semibold">
+                <Users className="h-4 w-4 mr-2" />
                 5000+ Happy Customers
               </Badge>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800 px-3 py-1 text-sm">
-                <Shield className="h-4 w-4 mr-1" />
+              <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 text-sm font-semibold">
+                <Shield className="h-4 w-4 mr-2" />
                 100% Secure & Reliable
               </Badge>
-              <Badge variant="secondary" className="bg-purple-100 text-purple-800 px-3 py-1 text-sm">
-                <Clock className="h-4 w-4 mr-1" />
+              <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 text-sm font-semibold">
+                <Clock className="h-4 w-4 mr-2" />
                 24x7 Support
               </Badge>
             </div>
 
-            {/* Main Hero Content */}
-            <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  {siteData.hero_headline}
+            {/* Main Hero Content with Premium Typography */}
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-6xl lg:text-8xl font-black text-white mb-8 leading-tight tracking-tight">
+                <span className="block bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent drop-shadow-2xl">
+                  {siteData.hero_headline.split(' ').slice(0, 3).join(' ')}
+                </span>
+                <span className="block bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent drop-shadow-2xl mt-2">
+                  {siteData.hero_headline.split(' ').slice(3).join(' ')}
                 </span>
               </h2>
               
-              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl lg:text-3xl text-blue-100 mb-12 max-w-5xl mx-auto leading-relaxed font-light">
                 {siteData.hero_subheadline}
               </p>
 
-              {/* Key Benefits */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-4xl mx-auto">
-                <div className="flex flex-col items-center p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
-                  <Zap className="h-8 w-8 text-blue-600 mb-2" />
-                  <span className="text-sm font-semibold text-gray-700">30 Min Setup</span>
+              {/* Key Benefits with Premium Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-5xl mx-auto">
+                <div className="flex flex-col items-center p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <Zap className="h-10 w-10 text-yellow-400 mb-3" />
+                  <span className="text-sm md:text-base font-bold text-white">30 Min Setup</span>
                 </div>
-                <div className="flex flex-col items-center p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
-                  <TrendingUp className="h-8 w-8 text-green-600 mb-2" />
-                  <span className="text-sm font-semibold text-gray-700">Boost Sales</span>
+                <div className="flex flex-col items-center p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <TrendingUp className="h-10 w-10 text-green-400 mb-3" />
+                  <span className="text-sm md:text-base font-bold text-white">Boost Sales</span>
                 </div>
-                <div className="flex flex-col items-center p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
-                  <Shield className="h-8 w-8 text-purple-600 mb-2" />
-                  <span className="text-sm font-semibold text-gray-700">Zero Risk</span>
+                <div className="flex flex-col items-center p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <Shield className="h-10 w-10 text-purple-400 mb-3" />
+                  <span className="text-sm md:text-base font-bold text-white">Zero Risk</span>
                 </div>
-                <div className="flex flex-col items-center p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
-                  <Users className="h-8 w-8 text-orange-600 mb-2" />
-                  <span className="text-sm font-semibold text-gray-700">Expert Support</span>
+                <div className="flex flex-col items-center p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <Users className="h-10 w-10 text-orange-400 mb-3" />
+                  <span className="text-sm md:text-base font-bold text-white">Expert Support</span>
                 </div>
               </div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+              {/* Premium CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
                 <Button 
                   onClick={handleCall}
                   size="lg" 
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 min-w-[280px] sm:min-w-0"
+                  className="bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800 text-white px-10 py-6 text-xl font-bold shadow-2xl hover:shadow-green-500/25 transform hover:scale-110 transition-all duration-300 flex items-center space-x-3 min-w-[320px] sm:min-w-0 rounded-2xl border-2 border-green-400/50"
                 >
-                  <PhoneCall className="h-5 w-5" />
+                  <PhoneCall className="h-6 w-6" />
                   <span>Call Now - {siteData.phone}</span>
                 </Button>
                 <Button 
                   onClick={handleWhatsApp}
                   size="lg" 
-                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 min-w-[280px] sm:min-w-0"
+                  className="bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 hover:from-blue-600 hover:via-purple-600 hover:to-purple-700 text-white px-10 py-6 text-xl font-bold shadow-2xl hover:shadow-blue-500/25 transform hover:scale-110 transition-all duration-300 flex items-center space-x-3 min-w-[320px] sm:min-w-0 rounded-2xl border-2 border-blue-400/50"
                 >
-                  <MessageCircle className="h-5 w-5" />
+                  <MessageCircle className="h-6 w-6" />
                   <span>Get Free Quote</span>
-                  <ArrowRight className="h-5 w-5 ml-1" />
+                  <ArrowRight className="h-6 w-6 ml-1" />
                 </Button>
               </div>
 
-              {/* Special Offer Banner */}
-              <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full inline-block shadow-lg animate-pulse">
-                <span className="font-bold text-lg">🎉 Limited Time: FREE Setup Worth ₹5,000! Call Now!</span>
+              {/* Premium Special Offer Banner */}
+              <div className="relative">
+                <div className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white px-8 py-4 rounded-full inline-block shadow-2xl animate-pulse border-2 border-yellow-300/50">
+                  <span className="font-black text-lg md:text-xl">🎉 Limited Time: FREE Setup Worth ₹5,000! Call Now!</span>
+                </div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-full blur-sm opacity-30 animate-pulse"></div>
               </div>
             </div>
 
-            {/* Customer Testimonial Preview */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl max-w-2xl mx-auto">
-              <div className="flex items-center justify-center mb-4">
+            {/* Premium Customer Testimonial Preview */}
+            <div className="bg-white/15 backdrop-blur-md rounded-3xl p-8 shadow-2xl max-w-3xl mx-auto border border-white/20">
+              <div className="flex items-center justify-center mb-6">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                  <Star key={i} className="h-7 w-7 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <p className="text-gray-700 text-center italic mb-4">
+              <p className="text-white text-center text-lg md:text-xl italic mb-6 font-light">
                 "Leadify's IVR system transformed our business! We get 50% more qualified leads now."
               </p>
               <div className="text-center">
-                <p className="font-semibold text-gray-900">Rajesh Kumar</p>
-                <p className="text-sm text-gray-600">CEO, Kumar Enterprises</p>
+                <p className="font-bold text-white text-lg">Rajesh Kumar</p>
+                <p className="text-blue-200">CEO, Kumar Enterprises</p>
               </div>
             </div>
           </div>
