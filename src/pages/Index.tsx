@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, MessageCircle, Star, Check, PhoneCall } from 'lucide-react';
+import { Phone, MessageCircle, Star, Check, PhoneCall, Zap, Shield, Clock, Users, ArrowRight, TrendingUp } from 'lucide-react';
 import { toast } from "sonner";
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { supabase } from '@/integrations/supabase/client';
@@ -181,33 +181,104 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-20 text-center">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            {siteData.hero_headline}
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            {siteData.hero_subheadline}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              onClick={handleCall}
-              size="lg" 
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg flex items-center space-x-2"
-            >
-              <PhoneCall className="h-5 w-5" />
-              <span>Call Now - {siteData.phone}</span>
-            </Button>
-            <Button 
-              onClick={handleWhatsApp}
-              size="lg" 
-              variant="outline" 
-              className="px-8 py-3 text-lg flex items-center space-x-2"
-            >
-              <MessageCircle className="h-5 w-5" />
-              <span>Get Quote on WhatsApp</span>
-            </Button>
+      {/* Enhanced Hero Section */}
+      <section className="relative py-12 md:py-20 lg:py-28 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 opacity-5"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-6xl mx-auto">
+            {/* Trust Badges */}
+            <div className="flex flex-wrap justify-center items-center gap-4 mb-8 opacity-80">
+              <Badge variant="secondary" className="bg-green-100 text-green-800 px-3 py-1 text-sm">
+                <Users className="h-4 w-4 mr-1" />
+                5000+ Happy Customers
+              </Badge>
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800 px-3 py-1 text-sm">
+                <Shield className="h-4 w-4 mr-1" />
+                100% Secure & Reliable
+              </Badge>
+              <Badge variant="secondary" className="bg-purple-100 text-purple-800 px-3 py-1 text-sm">
+                <Clock className="h-4 w-4 mr-1" />
+                24x7 Support
+              </Badge>
+            </div>
+
+            {/* Main Hero Content */}
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {siteData.hero_headline}
+                </span>
+              </h2>
+              
+              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
+                {siteData.hero_subheadline}
+              </p>
+
+              {/* Key Benefits */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-4xl mx-auto">
+                <div className="flex flex-col items-center p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
+                  <Zap className="h-8 w-8 text-blue-600 mb-2" />
+                  <span className="text-sm font-semibold text-gray-700">30 Min Setup</span>
+                </div>
+                <div className="flex flex-col items-center p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
+                  <TrendingUp className="h-8 w-8 text-green-600 mb-2" />
+                  <span className="text-sm font-semibold text-gray-700">Boost Sales</span>
+                </div>
+                <div className="flex flex-col items-center p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
+                  <Shield className="h-8 w-8 text-purple-600 mb-2" />
+                  <span className="text-sm font-semibold text-gray-700">Zero Risk</span>
+                </div>
+                <div className="flex flex-col items-center p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
+                  <Users className="h-8 w-8 text-orange-600 mb-2" />
+                  <span className="text-sm font-semibold text-gray-700">Expert Support</span>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                <Button 
+                  onClick={handleCall}
+                  size="lg" 
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 min-w-[280px] sm:min-w-0"
+                >
+                  <PhoneCall className="h-5 w-5" />
+                  <span>Call Now - {siteData.phone}</span>
+                </Button>
+                <Button 
+                  onClick={handleWhatsApp}
+                  size="lg" 
+                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 min-w-[280px] sm:min-w-0"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  <span>Get Free Quote</span>
+                  <ArrowRight className="h-5 w-5 ml-1" />
+                </Button>
+              </div>
+
+              {/* Special Offer Banner */}
+              <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full inline-block shadow-lg animate-pulse">
+                <span className="font-bold text-lg">🎉 Limited Time: FREE Setup Worth ₹5,000! Call Now!</span>
+              </div>
+            </div>
+
+            {/* Customer Testimonial Preview */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl max-w-2xl mx-auto">
+              <div className="flex items-center justify-center mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                ))}
+              </div>
+              <p className="text-gray-700 text-center italic mb-4">
+                "Leadify's IVR system transformed our business! We get 50% more qualified leads now."
+              </p>
+              <div className="text-center">
+                <p className="font-semibold text-gray-900">Rajesh Kumar</p>
+                <p className="text-sm text-gray-600">CEO, Kumar Enterprises</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
