@@ -38,6 +38,42 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_pages: {
+        Row: {
+          active: boolean
+          content: string
+          created_at: string
+          id: string
+          show_in_footer: boolean
+          slug: string
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          content: string
+          created_at?: string
+          id?: string
+          show_in_footer?: boolean
+          slug: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          content?: string
+          created_at?: string
+          id?: string
+          show_in_footer?: boolean
+          slug?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string | null
@@ -133,6 +169,36 @@ export type Database = {
           sort_order?: number | null
           tab_id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      scripts: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          position: string
+          script_content: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          position: string
+          script_content: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          position?: string
+          script_content?: string
+          updated_at?: string
         }
         Relationships: []
       }

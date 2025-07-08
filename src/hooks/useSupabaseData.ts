@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -53,12 +52,36 @@ interface Lead {
   created_at: string;
 }
 
+interface Script {
+  id: string;
+  name: string;
+  script_content: string;
+  position: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface CustomPage {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  active: boolean;
+  show_in_footer: boolean;
+  sort_order: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useSupabaseData = () => {
   const [websiteConfig, setWebsiteConfig] = useState<WebsiteConfig | null>(null);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [pricingTabs, setPricingTabs] = useState<PricingTab[]>([]);
   const [packages, setPackages] = useState<{ [key: string]: Package[] }>({});
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [scripts, setScripts] = useState<Script[]>([]);
+  const [customPages, setCustomPages] = useState<CustomPage[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Load all data
@@ -132,6 +155,30 @@ export const useSupabaseData = () => {
         console.error('Error loading leads:', leadsError);
       } else {
         setLeads(leadsData || []);
+      }
+
+      // Load scripts
+      const { data: scriptsData, error: scriptsError } = await supabase
+        .from('scripts')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (scriptsError) {
+        console.error('Error loading scripts:', scriptsError);
+      } else {
+        setScripts(scriptsData || []);
+      }
+
+      // Load custom pages
+      const { data: customPagesData, error: customPagesError } = await supabase
+        .from('custom_pages')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+      if (customPagesError) {
+        console.error('Error loading custom pages:', customPagesError);
+      } else {
+        setCustomPages(customPagesData || []);
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -315,6 +362,108 @@ export const useSupabaseData = () => {
     }
   };
 
+  // Script operations
+  const addScript = async (script: Omit<Script, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { error } = await supabase
+        .from('scripts')
+        .insert(script);
+
+      if (error) throw error;
+      
+      await loadData();
+      toast.success('Script added successfully!');
+    } catch (error) {
+      console.error('Error adding script:', error);
+      toast.error('Failed to add script');
+    }
+  };
+
+  const updateScript = async (id: string, script: Partial<Script>) => {
+    try {
+      const { error } = await supabase
+        .from('scripts')
+        .update({ ...script, updated_at: new Date().toISOString() })
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      await loadData();
+      toast.success('Script updated successfully!');
+    } catch (error) {
+      console.error('Error updating script:', error);
+      toast.error('Failed to update script');
+    }
+  };
+
+  const deleteScript = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('scripts')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      await loadData();
+      toast.success('Script deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting script:', error);
+      toast.error('Failed to delete script');
+    }
+  };
+
+  // Custom page operations
+  const addCustomPage = async (page: Omit<CustomPage, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { error } = await supabase
+        .from('custom_pages')
+        .insert(page);
+
+      if (error) throw error;
+      
+      await loadData();
+      toast.success('Custom page added successfully!');
+    } catch (error) {
+      console.error('Error adding custom page:', error);
+      toast.error('Failed to add custom page');
+    }
+  };
+
+  const updateCustomPage = async (id: string, page: Partial<CustomPage>) => {
+    try {
+      const { error } = await supabase
+        .from('custom_pages')
+        .update({ ...page, updated_at: new Date().toISOString() })
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      await loadData();
+      toast.success('Custom page updated successfully!');
+    } catch (error) {
+      console.error('Error updating custom page:', error);
+      toast.error('Failed to update custom page');
+    }
+  };
+
+  const deleteCustomPage = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('custom_pages')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      await loadData();
+      toast.success('Custom page deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting custom page:', error);
+      toast.error('Failed to delete custom page');
+    }
+  };
+
   // Lead operations
   const deleteLeads = async (id: string) => {
     try {
@@ -343,6 +492,8 @@ export const useSupabaseData = () => {
     pricingTabs,
     packages,
     leads,
+    scripts,
+    customPages,
     loading,
     saveWebsiteConfig,
     addTestimonial,
@@ -354,6 +505,12 @@ export const useSupabaseData = () => {
     addPackage,
     updatePackage,
     deletePackage,
+    addScript,
+    updateScript,
+    deleteScript,
+    addCustomPage,
+    updateCustomPage,
+    deleteCustomPage,
     deleteLeads,
     reloadData: loadData
   };

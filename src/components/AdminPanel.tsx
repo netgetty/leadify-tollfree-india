@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Settings, Save, Eye, EyeOff, Plus, Trash2, Edit3 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Settings, Save, Eye, EyeOff, Plus, Trash2, Edit3, Code, FileText } from 'lucide-react';
 import { toast } from "sonner";
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 
@@ -21,6 +21,8 @@ const AdminPanel = () => {
   const [localTestimonials, setLocalTestimonials] = useState<any[]>([]);
   const [localPricingTabs, setLocalPricingTabs] = useState<any[]>([]);
   const [localPackages, setLocalPackages] = useState<any>({});
+  const [localScripts, setLocalScripts] = useState<any[]>([]);
+  const [localCustomPages, setLocalCustomPages] = useState<any[]>([]);
   
   const {
     websiteConfig,
@@ -28,6 +30,8 @@ const AdminPanel = () => {
     pricingTabs,
     packages,
     leads,
+    scripts,
+    customPages,
     loading,
     saveWebsiteConfig,
     addTestimonial,
@@ -39,6 +43,12 @@ const AdminPanel = () => {
     addPackage,
     updatePackage,
     deletePackage,
+    addScript,
+    updateScript,
+    deleteScript,
+    addCustomPage,
+    updateCustomPage,
+    deleteCustomPage,
     deleteLeads
   } = useSupabaseData();
 
@@ -66,6 +76,18 @@ const AdminPanel = () => {
       setLocalPackages({ ...packages });
     }
   }, [packages, localPackages]);
+
+  React.useEffect(() => {
+    if (scripts.length > 0 && localScripts.length === 0) {
+      setLocalScripts([...scripts]);
+    }
+  }, [scripts, localScripts]);
+
+  React.useEffect(() => {
+    if (customPages.length > 0 && localCustomPages.length === 0) {
+      setLocalCustomPages([...customPages]);
+    }
+  }, [customPages, localCustomPages]);
 
   const adminCredentials = {
     username: 'admin',
@@ -192,6 +214,64 @@ const AdminPanel = () => {
     addPackage(newPackage);
   };
 
+  // Script handlers
+  const handleLocalScriptChange = (index: number, field: string, value: any) => {
+    setLocalScripts(prev => 
+      prev.map((script, i) => 
+        i === index ? { ...script, [field]: value } : script
+      )
+    );
+  };
+
+  const handleSaveScript = (index: number) => {
+    const script = localScripts[index];
+    if (script.id) {
+      updateScript(script.id, script);
+    }
+  };
+
+  const handleAddScript = () => {
+    const newScript = {
+      id: null,
+      name: 'New Script',
+      script_content: '',
+      position: 'head',
+      active: true
+    };
+    setLocalScripts(prev => [...prev, newScript]);
+    addScript(newScript);
+  };
+
+  // Custom page handlers
+  const handleLocalCustomPageChange = (index: number, field: string, value: any) => {
+    setLocalCustomPages(prev => 
+      prev.map((page, i) => 
+        i === index ? { ...page, [field]: value } : page
+      )
+    );
+  };
+
+  const handleSaveCustomPage = (index: number) => {
+    const page = localCustomPages[index];
+    if (page.id) {
+      updateCustomPage(page.id, page);
+    }
+  };
+
+  const handleAddCustomPage = () => {
+    const newPage = {
+      id: null,
+      title: 'New Page',
+      slug: `page-${Date.now()}`,
+      content: '<p>Your page content here...</p>',
+      active: true,
+      show_in_footer: true,
+      sort_order: localCustomPages.length + 1
+    };
+    setLocalCustomPages(prev => [...prev, newPage]);
+    addCustomPage(newPage);
+  };
+
   const handleDeleteLead = async (leadId: string) => {
     if (confirm('Are you sure you want to delete this lead?')) {
       await deleteLeads(leadId);
@@ -275,7 +355,7 @@ const AdminPanel = () => {
             </form>
           ) : (
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-8">
+              <TabsList className="grid w-full grid-cols-10">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="content">Content</TabsTrigger>
                 <TabsTrigger value="pricing">Pricing</TabsTrigger>
@@ -284,6 +364,8 @@ const AdminPanel = () => {
                 <TabsTrigger value="seo">SEO</TabsTrigger>
                 <TabsTrigger value="leads">Leads</TabsTrigger>
                 <TabsTrigger value="manage-leads">Manage Leads</TabsTrigger>
+                <TabsTrigger value="scripts">Scripts</TabsTrigger>
+                <TabsTrigger value="pages">Pages</TabsTrigger>
               </TabsList>
 
               {/* Basic Info Tab */}
@@ -710,6 +792,179 @@ const AdminPanel = () => {
                     <p className="text-sm">Leads will appear here when customers submit the contact form</p>
                   </div>
                 )}
+              </TabsContent>
+
+              {/* Scripts Tab */}
+              <TabsContent value="scripts" className="space-y-4 mt-6">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <Code className="h-5 w-5" />
+                    <h3 className="text-lg font-semibold">3rd-Party Scripts</h3>
+                  </div>
+                  <Button onClick={handleAddScript} size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Script
+                  </Button>
+                </div>
+                <div className="space-y-4">
+                  {localScripts.map((script, index) => (
+                    <Card key={script.id || index} className="p-4">
+                      <div className="flex justify-between items-start mb-4">
+                        <h4 className="font-medium">Script Configuration</h4>
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => handleSaveScript(index)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            <Save className="h-4 w-4 mr-1" />
+                            Save
+                          </Button>
+                          <Button
+                            onClick={() => script.id && deleteScript(script.id)}
+                            variant="destructive"
+                            size="sm"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <Input
+                          placeholder="Script Name"
+                          value={script.name}
+                          onChange={(e) => handleLocalScriptChange(index, 'name', e.target.value)}
+                        />
+                        <Select
+                          value={script.position}
+                          onValueChange={(value) => handleLocalScriptChange(index, 'position', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Position" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="head">Head Section</SelectItem>
+                            <SelectItem value="body">Before Body End</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Textarea
+                        placeholder="Script content (JavaScript/HTML)"
+                        value={script.script_content}
+                        onChange={(e) => handleLocalScriptChange(index, 'script_content', e.target.value)}
+                        className="mb-4 font-mono text-sm"
+                        rows={6}
+                      />
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`script-active-${index}`}
+                          checked={script.active}
+                          onChange={(e) => handleLocalScriptChange(index, 'active', e.target.checked)}
+                        />
+                        <Label htmlFor={`script-active-${index}`}>Active</Label>
+                      </div>
+                    </Card>
+                  ))}
+                  {localScripts.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No scripts configured</p>
+                      <p className="text-sm">Add tracking codes, analytics, or other 3rd-party scripts</p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+
+              {/* Custom Pages Tab */}
+              <TabsContent value="pages" className="space-y-4 mt-6">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <FileText className="h-5 w-5" />
+                    <h3 className="text-lg font-semibold">Custom Pages</h3>
+                  </div>
+                  <Button onClick={handleAddCustomPage} size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Page
+                  </Button>
+                </div>
+                <div className="space-y-4">
+                  {localCustomPages.map((page, index) => (
+                    <Card key={page.id || index} className="p-4">
+                      <div className="flex justify-between items-start mb-4">
+                        <h4 className="font-medium">Page Configuration</h4>
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => handleSaveCustomPage(index)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            <Save className="h-4 w-4 mr-1" />
+                            Save
+                          </Button>
+                          <Button
+                            onClick={() => page.id && deleteCustomPage(page.id)}
+                            variant="destructive"
+                            size="sm"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <Input
+                          placeholder="Page Title"
+                          value={page.title}
+                          onChange={(e) => handleLocalCustomPageChange(index, 'title', e.target.value)}
+                        />
+                        <Input
+                          placeholder="URL Slug (e.g., privacy-policy)"
+                          value={page.slug}
+                          onChange={(e) => handleLocalCustomPageChange(index, 'slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                        />
+                      </div>
+                      <Textarea
+                        placeholder="Page content (HTML allowed)"
+                        value={page.content}
+                        onChange={(e) => handleLocalCustomPageChange(index, 'content', e.target.value)}
+                        className="mb-4"
+                        rows={8}
+                      />
+                      <div className="flex items-center space-x-6">
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id={`page-active-${index}`}
+                            checked={page.active}
+                            onChange={(e) => handleLocalCustomPageChange(index, 'active', e.target.checked)}
+                          />
+                          <Label htmlFor={`page-active-${index}`}>Active</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id={`page-footer-${index}`}
+                            checked={page.show_in_footer}
+                            onChange={(e) => handleLocalCustomPageChange(index, 'show_in_footer', e.target.checked)}
+                          />
+                          <Label htmlFor={`page-footer-${index}`}>Show in Footer</Label>
+                        </div>
+                        {page.slug && (
+                          <div className="text-sm text-blue-600">
+                            Preview: <span className="font-mono">/{page.slug}</span>
+                          </div>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                  {localCustomPages.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No custom pages created</p>
+                      <p className="text-sm">Create pages like Privacy Policy, Terms of Service, etc.</p>
+                    </div>
+                  )}
+                </div>
               </TabsContent>
 
               <div className="flex justify-end space-x-4 mt-6 pt-6 border-t">
