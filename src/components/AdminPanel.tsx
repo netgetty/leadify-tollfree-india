@@ -214,7 +214,7 @@ const AdminPanel = () => {
     addPackage(newPackage);
   };
 
-  // Script handlers
+  // Script handlers - Fixed to properly work with database
   const handleLocalScriptChange = (index: number, field: string, value: any) => {
     setLocalScripts(prev => 
       prev.map((script, i) => 
@@ -223,26 +223,56 @@ const AdminPanel = () => {
     );
   };
 
-  const handleSaveScript = (index: number) => {
+  const handleSaveScript = async (index: number) => {
     const script = localScripts[index];
-    if (script.id) {
-      updateScript(script.id, script);
+    try {
+      if (script.id) {
+        await updateScript(script.id, script);
+      } else {
+        const newScript = await addScript({
+          name: script.name,
+          script_content: script.script_content,
+          position: script.position,
+          active: script.active
+        });
+        // Update local state with the new script ID
+        setLocalScripts(prev => 
+          prev.map((s, i) => i === index ? { ...s, id: newScript.id } : s)
+        );
+      }
+    } catch (error) {
+      console.error('Error saving script:', error);
     }
   };
 
-  const handleAddScript = () => {
+  const handleAddScript = async () => {
     const newScript = {
       id: null,
       name: 'New Script',
       script_content: '',
       position: 'head',
-      active: true
+      active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
     setLocalScripts(prev => [...prev, newScript]);
-    addScript(newScript);
   };
 
-  // Custom page handlers
+  const handleDeleteScript = async (scriptId: string, index: number) => {
+    if (scriptId) {
+      try {
+        await deleteScript(scriptId);
+        setLocalScripts(prev => prev.filter((_, i) => i !== index));
+      } catch (error) {
+        console.error('Error deleting script:', error);
+      }
+    } else {
+      // If no ID, just remove from local state
+      setLocalScripts(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  // Custom page handlers - Fixed to properly work with database
   const handleLocalCustomPageChange = (index: number, field: string, value: any) => {
     setLocalCustomPages(prev => 
       prev.map((page, i) => 
@@ -251,14 +281,31 @@ const AdminPanel = () => {
     );
   };
 
-  const handleSaveCustomPage = (index: number) => {
+  const handleSaveCustomPage = async (index: number) => {
     const page = localCustomPages[index];
-    if (page.id) {
-      updateCustomPage(page.id, page);
+    try {
+      if (page.id) {
+        await updateCustomPage(page.id, page);
+      } else {
+        const newPage = await addCustomPage({
+          title: page.title,
+          slug: page.slug,
+          content: page.content,
+          active: page.active,
+          show_in_footer: page.show_in_footer,
+          sort_order: page.sort_order
+        });
+        // Update local state with the new page ID
+        setLocalCustomPages(prev => 
+          prev.map((p, i) => i === index ? { ...p, id: newPage.id } : p)
+        );
+      }
+    } catch (error) {
+      console.error('Error saving custom page:', error);
     }
   };
 
-  const handleAddCustomPage = () => {
+  const handleAddCustomPage = async () => {
     const newPage = {
       id: null,
       title: 'New Page',
@@ -266,10 +313,25 @@ const AdminPanel = () => {
       content: '<p>Your page content here...</p>',
       active: true,
       show_in_footer: true,
-      sort_order: localCustomPages.length + 1
+      sort_order: localCustomPages.length + 1,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
     setLocalCustomPages(prev => [...prev, newPage]);
-    addCustomPage(newPage);
+  };
+
+  const handleDeleteCustomPage = async (pageId: string, index: number) => {
+    if (pageId) {
+      try {
+        await deleteCustomPage(pageId);
+        setLocalCustomPages(prev => prev.filter((_, i) => i !== index));
+      } catch (error) {
+        console.error('Error deleting custom page:', error);
+      }
+    } else {
+      // If no ID, just remove from local state
+      setLocalCustomPages(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   const handleDeleteLead = async (leadId: string) => {
@@ -821,7 +883,7 @@ const AdminPanel = () => {
                             Save
                           </Button>
                           <Button
-                            onClick={() => script.id && deleteScript(script.id)}
+                            onClick={() => handleDeleteScript(script.id, index)}
                             variant="destructive"
                             size="sm"
                           >
@@ -903,7 +965,7 @@ const AdminPanel = () => {
                             Save
                           </Button>
                           <Button
-                            onClick={() => page.id && deleteCustomPage(page.id)}
+                            onClick={() => handleDeleteCustomPage(page.id, index)}
                             variant="destructive"
                             size="sm"
                           >

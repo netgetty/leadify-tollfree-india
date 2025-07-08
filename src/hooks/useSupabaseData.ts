@@ -365,17 +365,26 @@ export const useSupabaseData = () => {
   // Script operations
   const addScript = async (script: Omit<Script, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('scripts')
-        .insert(script);
+        .insert({
+          name: script.name,
+          script_content: script.script_content,
+          position: script.position,
+          active: script.active
+        })
+        .select()
+        .single();
 
       if (error) throw error;
       
       await loadData();
       toast.success('Script added successfully!');
+      return data;
     } catch (error) {
       console.error('Error adding script:', error);
       toast.error('Failed to add script');
+      throw error;
     }
   };
 
@@ -383,7 +392,13 @@ export const useSupabaseData = () => {
     try {
       const { error } = await supabase
         .from('scripts')
-        .update({ ...script, updated_at: new Date().toISOString() })
+        .update({
+          name: script.name,
+          script_content: script.script_content,
+          position: script.position,
+          active: script.active,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', id);
 
       if (error) throw error;
@@ -393,6 +408,7 @@ export const useSupabaseData = () => {
     } catch (error) {
       console.error('Error updating script:', error);
       toast.error('Failed to update script');
+      throw error;
     }
   };
 
@@ -410,23 +426,35 @@ export const useSupabaseData = () => {
     } catch (error) {
       console.error('Error deleting script:', error);
       toast.error('Failed to delete script');
+      throw error;
     }
   };
 
   // Custom page operations
   const addCustomPage = async (page: Omit<CustomPage, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('custom_pages')
-        .insert(page);
+        .insert({
+          title: page.title,
+          slug: page.slug,
+          content: page.content,
+          active: page.active,
+          show_in_footer: page.show_in_footer,
+          sort_order: page.sort_order
+        })
+        .select()
+        .single();
 
       if (error) throw error;
       
       await loadData();
       toast.success('Custom page added successfully!');
+      return data;
     } catch (error) {
       console.error('Error adding custom page:', error);
       toast.error('Failed to add custom page');
+      throw error;
     }
   };
 
@@ -434,7 +462,15 @@ export const useSupabaseData = () => {
     try {
       const { error } = await supabase
         .from('custom_pages')
-        .update({ ...page, updated_at: new Date().toISOString() })
+        .update({
+          title: page.title,
+          slug: page.slug,
+          content: page.content,
+          active: page.active,
+          show_in_footer: page.show_in_footer,
+          sort_order: page.sort_order,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', id);
 
       if (error) throw error;
@@ -444,6 +480,7 @@ export const useSupabaseData = () => {
     } catch (error) {
       console.error('Error updating custom page:', error);
       toast.error('Failed to update custom page');
+      throw error;
     }
   };
 
@@ -461,6 +498,7 @@ export const useSupabaseData = () => {
     } catch (error) {
       console.error('Error deleting custom page:', error);
       toast.error('Failed to delete custom page');
+      throw error;
     }
   };
 
