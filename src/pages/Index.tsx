@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -283,22 +282,6 @@ const Index = () => {
                   <span className="font-black text-lg md:text-xl">🎉 Limited Time: FREE Setup Worth ₹5,000! Call Now!</span>
                 </div>
                 <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-full blur-sm opacity-30 animate-pulse"></div>
-              </div>
-            </div>
-
-            {/* Premium Customer Testimonial Preview */}
-            <div className="bg-white/15 backdrop-blur-md rounded-3xl p-8 shadow-2xl max-w-3xl mx-auto border border-white/20">
-              <div className="flex items-center justify-center mb-6">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-7 w-7 text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <p className="text-white text-center text-lg md:text-xl italic mb-6 font-light">
-                "Leadify's IVR system transformed our business! We get 50% more qualified leads now."
-              </p>
-              <div className="text-center">
-                <p className="font-bold text-white text-lg">Rajesh Kumar</p>
-                <p className="text-blue-200">CEO, Kumar Enterprises</p>
               </div>
             </div>
           </div>
