@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +14,6 @@ import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [websiteConfig, setWebsiteConfig] = useState<any>(null);
-  const [testimonials, setTestimonials] = useState<any[]>([]);
   const [pricingTabs, setPricingTabs] = useState<any[]>([]);
   const [packages, setPackages] = useState<any>({});
   const [customPages, setCustomPages] = useState<any[]>([]);
@@ -38,13 +38,6 @@ const Index = () => {
         .single();
       
       if (configData) setWebsiteConfig(configData);
-
-      const { data: testimonialsData } = await supabase
-        .from('testimonials')
-        .select('*')
-        .order('created_at', { ascending: true });
-      
-      if (testimonialsData) setTestimonials(testimonialsData);
 
       const { data: tabsData } = await supabase
         .from('pricing_tabs')
@@ -129,7 +122,7 @@ const Index = () => {
       <section className="relative overflow-hidden">
         {/* Premium Background Effects */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/50 via-purple-900/50 to-indigo-900/50"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%239C92AC\" fill-opacity=\"0.05\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"2\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
         
         {/* Floating Elements */}
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
@@ -332,37 +325,6 @@ const Index = () => {
                 </TabsContent>
               ))}
             </Tabs>
-          </div>
-        </section>
-      )}
-
-      {/* Testimonials Section */}
-      {testimonials.length > 0 && (
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-                What Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">Clients Say</span>
-              </h2>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {testimonials.map((testimonial) => (
-                <Card key={testimonial.id} className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-all duration-300">
-                  <CardContent className="p-8">
-                    <div className="flex items-center justify-center mb-6">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                      ))}
-                    </div>
-                    <p className="text-blue-100 italic mb-6 text-center">"{testimonial.text}"</p>
-                    <div className="text-center">
-                      <p className="font-bold text-white">{testimonial.name}</p>
-                      <p className="text-blue-300 text-sm">{testimonial.company}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
           </div>
         </section>
       )}
