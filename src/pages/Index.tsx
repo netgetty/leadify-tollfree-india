@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -138,15 +137,8 @@ const Index = () => {
               )}
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#services" className="text-foreground hover:text-primary transition-colors font-medium">Services</a>
-              <a href="#pricing" className="text-foreground hover:text-primary transition-colors font-medium">Pricing</a>
-              <a href="#contact" className="text-foreground hover:text-primary transition-colors font-medium">Contact</a>
-            </nav>
-
             {/* Contact Buttons */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="flex items-center space-x-4">
               <a 
                 href={`https://wa.me/${websiteConfig?.whatsapp || '911234567890'}`}
                 target="_blank" 
@@ -154,7 +146,7 @@ const Index = () => {
                 className="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium"
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
-                WhatsApp
+                <span className="hidden sm:inline">WhatsApp</span>
               </a>
               
               <a 
@@ -162,72 +154,33 @@ const Index = () => {
                 className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors font-medium"
               >
                 <Phone className="h-4 w-4 mr-2" />
-                Call Now
+                <span className="hidden sm:inline">Call Now</span>
               </a>
             </div>
-
-            {/* Mobile Menu Button */}
-            <button 
-              className="md:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
           </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-border">
-              <nav className="flex flex-col space-y-4">
-                <a href="#services" className="text-foreground hover:text-primary transition-colors font-medium">Services</a>
-                <a href="#pricing" className="text-foreground hover:text-primary transition-colors font-medium">Pricing</a>
-                <a href="#contact" className="text-foreground hover:text-primary transition-colors font-medium">Contact</a>
-                
-                <div className="flex flex-col space-y-3 pt-4">
-                  <a 
-                    href={`https://wa.me/${websiteConfig?.whatsapp || '911234567890'}`}
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium"
-                  >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    WhatsApp
-                  </a>
-                  
-                  <a 
-                    href={`tel:${websiteConfig?.phone || '+91 123-456-7890'}`}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors font-medium"
-                  >
-                    <Phone className="h-4 w-4 mr-2" />
-                    Call Now
-                  </a>
-                </div>
-              </nav>
-            </div>
-          )}
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100">
+      <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-violet-50 to-blue-50">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563eb' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
           }}></div>
         </div>
         
         {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300/30 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-blue-400/30 rounded-full mix-blend-multiply filter blur-xl animate-float" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/30 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-violet-400/30 rounded-full mix-blend-multiply filter blur-xl animate-float" style={{animationDelay: '2s'}}></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-200/20 rounded-full mix-blend-multiply filter blur-xl animate-float" style={{animationDelay: '4s'}}></div>
 
         <div className="relative container mx-auto px-4 py-20 lg:py-32">
           <div className="text-center max-w-5xl mx-auto">
             {/* Premium Badge */}
-            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-blue-600/20 backdrop-blur-sm border border-blue-300 mb-8 glow-blue">
-              <Sparkles className="h-5 w-5 text-blue-600 mr-2 animate-pulse" />
-              <span className="text-blue-700 font-semibold font-poppins">India's #1 Cloud Telephony Platform</span>
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/20 to-violet-600/20 backdrop-blur-sm border border-purple-300 mb-8 glow-blue">
+              <Sparkles className="h-5 w-5 text-purple-600 mr-2 animate-pulse" />
+              <span className="text-purple-700 font-semibold font-poppins">India's #1 Cloud Telephony Platform</span>
             </div>
 
             {/* Main Headline */}
