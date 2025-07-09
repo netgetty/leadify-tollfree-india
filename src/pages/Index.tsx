@@ -162,7 +162,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-violet-50 to-blue-50">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -171,27 +171,27 @@ const Index = () => {
         </div>
         
         {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/30 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-violet-400/30 rounded-full mix-blend-multiply filter blur-xl animate-float" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300/20 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-blue-400/20 rounded-full mix-blend-multiply filter blur-xl animate-float" style={{animationDelay: '2s'}}></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-200/20 rounded-full mix-blend-multiply filter blur-xl animate-float" style={{animationDelay: '4s'}}></div>
 
         <div className="relative container mx-auto px-4 py-20 lg:py-32">
           <div className="text-center max-w-5xl mx-auto">
             {/* Premium Badge */}
-            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/20 to-violet-600/20 backdrop-blur-sm border border-purple-300 mb-8 glow-blue">
-              <Sparkles className="h-5 w-5 text-purple-600 mr-2 animate-pulse" />
-              <span className="text-purple-700 font-semibold font-poppins">India's #1 Cloud Telephony Platform</span>
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-500/20 backdrop-blur-sm border border-blue-300 mb-8">
+              <Sparkles className="h-5 w-5 text-blue-200 mr-2 animate-pulse" />
+              <span className="text-blue-100 font-semibold font-poppins">India's #1 Cloud Telephony Platform</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-8 leading-tight font-poppins">
-              <span className="text-gradient-blue gradient-animate">
+              <span className="text-white">
                 {websiteConfig?.hero_headline || 'Boost Your Business with Smart IVR & Toll-Free Numbers'}
               </span>
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl md:text-2xl text-gray-700 mb-12 font-light leading-relaxed max-w-4xl mx-auto font-inter">
+            <p className="text-xl md:text-2xl text-blue-100 mb-12 font-light leading-relaxed max-w-4xl mx-auto font-inter">
               {websiteConfig?.hero_subheadline || 'Affordable Pricing • Easy To Use • 24x7 Call Routing • Cloud Hosted • No Hardware Needed'}
             </p>
 
