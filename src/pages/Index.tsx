@@ -196,7 +196,7 @@ const Index = () => {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <a 
                 href={`tel:${websiteConfig?.phone || '+91 123-456-7890'}`}
                 className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 min-w-[200px] glow-blue font-poppins"
@@ -216,15 +216,6 @@ const Index = () => {
                 <MessageCircle className="h-6 w-6 mr-3 relative z-10" />
                 <span className="relative z-10">WhatsApp</span>
               </a>
-            </div>
-
-            {/* Limited Time Offer Banner */}
-            <div className="relative max-w-2xl mx-auto">
-              <div className="relative bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 rounded-full p-1 animate-pulse">
-                <div className="bg-gradient-to-r from-yellow-300 via-orange-300 to-red-400 rounded-full py-4 px-8 text-center">
-                  <span className="font-black text-lg md:text-xl font-poppins text-gray-900">🎉 Limited Time: FREE Setup Worth ₹5,000! Call Now!</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
