@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, Mail, MessageCircle, Star, CheckCircle, Users, Award, TrendingUp, Shield, Headphones, Zap, Globe, ArrowRight, Sparkles, Menu, X } from 'lucide-react';
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
-import AdminPanel from '@/components/AdminPanel';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -116,8 +115,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <AdminPanel />
-      
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4">
