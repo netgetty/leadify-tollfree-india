@@ -408,12 +408,6 @@ const AdminPanel = () => {
               <Button type="submit" className="w-full">
                 Login
               </Button>
-              <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded">
-                <p><strong>Default Credentials:</strong></p>
-                <p>Username: admin</p>
-                <p>Password: leadify2024</p>
-                <p><strong>Admin URL:</strong> {window.location.origin}/admin</p>
-              </div>
             </form>
           ) : (
             <Tabs defaultValue="basic" className="w-full">
